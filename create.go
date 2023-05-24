@@ -7,13 +7,14 @@ import (
 
 // CreateObjects
 func (c Connection) CreateObjects(table_name string, all_data ...map[string]string) (message string, ok bool) {
+	c.Open()
+	defer c.Close()
 
 	tx, err := c.Begin()
 	if err != nil {
 		c.filterMessageDBtoClient(err.Error(), table_name, &message)
 		return
 	}
-	defer tx.Rollback()
 
 	for i, data := range all_data {
 		var columns, placeholders []string
@@ -41,6 +42,7 @@ func (c Connection) CreateObjects(table_name string, all_data ...map[string]stri
 		stmt, err := tx.Prepare(query)
 		if err != nil {
 			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			tx.Rollback()
 			return
 		}
 		defer stmt.Close()
@@ -48,6 +50,7 @@ func (c Connection) CreateObjects(table_name string, all_data ...map[string]stri
 		_, err = stmt.Exec(values...)
 		if err != nil {
 			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			tx.Rollback()
 			return
 		}
 
@@ -57,6 +60,7 @@ func (c Connection) CreateObjects(table_name string, all_data ...map[string]stri
 
 	if err := tx.Commit(); err != nil {
 		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		tx.Rollback()
 		return
 	}
 

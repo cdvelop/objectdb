@@ -24,7 +24,7 @@ func (c Connection) createTest(t *testing.T) {
 
 			mg, ok := c.CreateObjects(data.Object, data.Data)
 			if ok != data.Result {
-				log.Fatalf("%v %v\n", mg, ok)
+				log.Fatalf("Error: [%v]\n", mg)
 			} else {
 				// si esta ok ejecuto test de lectura
 				objRead := dataTestCRUD[prueba]

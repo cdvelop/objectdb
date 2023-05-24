@@ -20,13 +20,13 @@ func (c *Connection) TestCrudStart(t *testing.T, orm dbtools.OrmAdapter) {
 
 	c.createTest(t)
 
-	c.readTest(t)
-
-	c.updateTest(t)
-
 	for _, table := range tables {
 		db.ClonDATABLE(table)
 	}
+
+	c.updateTest(t)
+
+	c.readTest(t)
 
 	c.deleteTest(t)
 }

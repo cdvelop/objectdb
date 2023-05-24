@@ -2,6 +2,7 @@ package objectdb
 
 import (
 	"log"
+	"strings"
 	"testing"
 )
 
@@ -16,6 +17,11 @@ func (c Connection) readTest(t *testing.T) {
 				if len(out) == 0 {
 					log.Fatalf("!!! READ data: [%v] resp\n", out)
 					t.Fail()
+				}
+
+				// fmt.Println("=> DATA CAMBIADA?:", out)
+				if !strings.Contains(out["apellido"], "NUEVO APELLIDO") {
+					log.Fatalln("ERROR APELLIDO NUEVO NO CAMBIADO SALIDA:\n", out)
 				}
 
 			})

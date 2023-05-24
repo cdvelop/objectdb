@@ -9,7 +9,6 @@ import (
 // limit ej 10, 5, 100. 0 no limit etc. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
 // names_to order ej: name,phone,address
 func (c Connection) ReadAllObjects(table_name string, limit uint8, names_to_order ...string) (out []map[string]string) {
-
 	var order_by string
 
 	if len(names_to_order) != 0 {
@@ -51,6 +50,9 @@ func (c Connection) ReadObject(table_name, id string) map[string]string {
 
 // SelectValue retorna valor de una consulta sql
 func (c Connection) SelectValue(sql string) (out string, ok bool) {
+	c.Open()
+	defer c.Close()
+
 	row := c.QueryRow(sql)
 	err := row.Scan(&out)
 	if err != nil {

@@ -2,7 +2,6 @@ package objectdb
 
 import (
 	"database/sql"
-	"sync"
 )
 
 type databaseAdapter interface {
@@ -12,9 +11,7 @@ type databaseAdapter interface {
 
 type Connection struct {
 	*sql.DB
-	err  error
-	once sync.Once //se ejecutara solo una vez
-
+	err error
 	databaseAdapter
 }
 

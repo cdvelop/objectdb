@@ -6,13 +6,14 @@ import (
 
 // DeleteObjects borra objetos de la base de datos según nombre de la tabla y ids.
 func (c Connection) DeleteObjects(table_name string, all_data ...map[string]string) (message string, ok bool) {
+	c.Open()
+	defer c.Close()
 
 	tx, err := c.Begin()
 	if err != nil {
 		c.filterMessageDBtoClient(err.Error(), table_name, &message)
 		return
 	}
-	defer tx.Rollback()
 
 	for _, data := range all_data {
 
@@ -21,6 +22,7 @@ func (c Connection) DeleteObjects(table_name string, all_data ...map[string]stri
 		stmt, err := tx.Prepare(query)
 		if err != nil {
 			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			tx.Rollback()
 			return
 		}
 		defer stmt.Close()
@@ -28,12 +30,14 @@ func (c Connection) DeleteObjects(table_name string, all_data ...map[string]stri
 		_, err = stmt.Exec(data["id_"+table_name])
 		if err != nil {
 			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			tx.Rollback()
 			return
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		tx.Rollback()
 		return
 	}
 

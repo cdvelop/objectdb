@@ -6,11 +6,8 @@ import (
 	"log"
 )
 
-// Conexión única (Open Stable) no cerrar al usar
 func (c *Connection) Open() {
-	c.once.Do(func() {
-		c.Set(c.databaseAdapter)
-	})
+	c.Set(c.databaseAdapter)
 }
 
 // obtener conexión
@@ -28,6 +25,7 @@ func Get(dba databaseAdapter) *Connection {
 	}
 
 	fmt.Printf("*** Conexión DB: %v Establecida, Engine: %v ***\n", dba.DataBaseName(), c.DataBasEngine())
+	defer c.Close()
 
 	return &c
 }

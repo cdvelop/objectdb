@@ -8,50 +8,62 @@ import (
 
 // UpdateObjects
 func (c Connection) UpdateObjects(table_name string, all_data ...map[string]string) (message string, ok bool) {
+	c.Open()
+	defer c.Close()
 
 	tx, err := c.DB.Begin()
 	if err != nil {
 		c.filterMessageDBtoClient(err.Error(), table_name, &message)
 		return
 	}
-	defer tx.Rollback()
 
 	for _, data := range all_data {
-		sql := fmt.Sprintf("UPDATE %s SET ", table_name)
+		query := fmt.Sprintf("UPDATE %s SET ", table_name)
 		values := make([]interface{}, 0)
-		var id_pk string
-		var id_val string
+		var field_pk string
+		var id_value string
 		var index uint8
 		for field, value := range data {
 			if _, pk := dbtools.IdpkTABLA(field, table_name); !pk {
 				index++
 
-				sql += fmt.Sprintf("%s = %s, ", field, c.PlaceHolders(index))
+				query += fmt.Sprintf("%s = %s, ", field, c.PlaceHolders(index))
 				values = append(values, value)
 
 			} else {
-				id_pk = field
-				id_val = value
+				field_pk = field
+				id_value = value
 			}
 
 		}
+
 		index++
 
-		sql = sql[:len(sql)-2] + " WHERE " + id_pk + " = " + c.PlaceHolders(index)
+		query = query[:len(query)-2] + " WHERE " + field_pk + " = " + c.PlaceHolders(index)
 
-		values = append(values, data[id_val])
+		values = append(values, id_value)
 
-		_, err := tx.Exec(sql, values...)
+		stmt, err := tx.Prepare(query)
 		if err != nil {
 			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			tx.Rollback()
+			return
+		}
+		defer stmt.Close()
+
+		_, err = stmt.Exec(values...)
+		if err != nil {
+			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			tx.Rollback()
 			return
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		tx.Rollback()
 		return
 	}
 
-	return "", true
+	return "Actualización Exitosa", true
 }

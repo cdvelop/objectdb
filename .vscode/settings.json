@@ -6,6 +6,7 @@
         "defaul",
         "Idpk",
         "mydb",
-        "sqldb"
+        "sqldb",
+        "tiendadb"
     ]
 }

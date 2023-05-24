@@ -1,20 +1,18 @@
 package objectdb
 
 import (
-	"fmt"
 	"log"
 	"testing"
 )
 
 func (c Connection) updateTest(t *testing.T) {
 
-	for index, data := range dataTestCRUD {
+	for _, data := range dataTestCRUD {
 
 		if data.Result { //solo los casos de éxito
-			lastName := fmt.Sprintf("apellido Actualizado %v", index)
 
 			data.Data["id_usuario"] = data.IdRecovered
-			data.Data["apellido"] = lastName
+			data.Data["apellido"] = "NUEVO APELLIDO"
 
 			t.Run(("UPDATE: " + data.IdRecovered), func(t *testing.T) {
 
@@ -25,10 +23,10 @@ func (c Connection) updateTest(t *testing.T) {
 
 				// validar elemento aquí
 				if mg, ok := object.ValidateData(false, data.Data); !ok {
-					data.IdRecovered = mg
+					log.Fatalln(mg)
 					return
 				}
-
+				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
 				mg, ok := c.UpdateObjects(defaulTableName, data.Data)
 				if !ok {
 					log.Fatalf("%v message: %v data in: \n[%v]", mg, ok, data.Data)

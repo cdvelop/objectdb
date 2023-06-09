@@ -6,7 +6,7 @@ import (
 
 type databaseAdapter interface {
 	dbEngineAdapter
-	crudOrmMethods
+	ormMethods
 }
 
 type Connection struct {
@@ -23,7 +23,8 @@ type dbEngineAdapter interface {
 	GetNewID() string         // función que genera nuevo id exclusivo para la db elegida
 }
 
-type crudOrmMethods interface {
+type ormMethods interface {
 	//ej postgres:"$1", sqlite: "?"
 	PlaceHolders(index ...uint8) string
+	DeleteDataBase()
 }

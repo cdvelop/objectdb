@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func (c Connection) filterMessageDBtoClient(dbErr string, table_name string, out_message *string, all_data ...map[string]string) {
+func filterMessageDBtoClient(dbErr string, table_name string, out_message *string, all_data ...map[string]string) {
 
 	if strings.Contains(dbErr, `delete`) && strings.Contains(dbErr, "viola la llave") {
 		*out_message = "¡Error No se puede eliminar!. Datos comprometidos en otra tabla"
@@ -14,7 +14,7 @@ func (c Connection) filterMessageDBtoClient(dbErr string, table_name string, out
 
 	if strings.Contains(dbErr, `llave duplicada`) {
 		for _, data := range all_data {
-			fieldError, valueError := c.findFieldWithError(dbErr, data)
+			fieldError, valueError := findFieldWithError(dbErr, data)
 			if fieldError != "" && valueError != "" {
 				*out_message = fmt.Sprintf("¡Error en el campo %v valor %v no se puede repetir!", fieldError, valueError)
 				return
@@ -25,7 +25,7 @@ func (c Connection) filterMessageDBtoClient(dbErr string, table_name string, out
 	*out_message = dbErr
 }
 
-func (c Connection) findFieldWithError(dbErr string, object map[string]string) (fieldError, valueError string) {
+func findFieldWithError(dbErr string, object map[string]string) (fieldError, valueError string) {
 	for key, value := range object {
 		if strings.Contains(dbErr, key) {
 			fieldError = key

@@ -11,7 +11,7 @@ func (c Connection) DeleteObjects(table_name string, all_data ...map[string]stri
 
 	tx, err := c.Begin()
 	if err != nil {
-		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		filterMessageDBtoClient(err.Error(), table_name, &message)
 		return
 	}
 
@@ -21,7 +21,7 @@ func (c Connection) DeleteObjects(table_name string, all_data ...map[string]stri
 		query := fmt.Sprintf("DELETE FROM %s WHERE %s = %s", table_name, "id_"+table_name, c.PlaceHolders(1))
 		stmt, err := tx.Prepare(query)
 		if err != nil {
-			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			filterMessageDBtoClient(err.Error(), table_name, &message, data)
 			tx.Rollback()
 			return
 		}
@@ -29,14 +29,14 @@ func (c Connection) DeleteObjects(table_name string, all_data ...map[string]stri
 
 		_, err = stmt.Exec(data["id_"+table_name])
 		if err != nil {
-			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			filterMessageDBtoClient(err.Error(), table_name, &message, data)
 			tx.Rollback()
 			return
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		filterMessageDBtoClient(err.Error(), table_name, &message)
 		tx.Rollback()
 		return
 	}

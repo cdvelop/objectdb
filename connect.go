@@ -8,8 +8,9 @@ import (
 	"github.com/cdvelop/dbtools"
 )
 
-func (c *Connection) Open() {
+func (c *Connection) Open() *sql.DB {
 	c.Set(c.databaseAdapter)
+	return c.DB
 }
 
 // obtener conexión

@@ -10,9 +10,13 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 
 	tables := c.addTestModelTablesDataBase()
 
-	db := dbtools.NewOperationDB(c.DB, c)
+	// eliminar tablas y data anterior
+	for _, t := range tables {
+		dbtools.DeleteTABLE(c, t.Name)
+	}
 
-	if !db.CreateAllTABLES(tables...) {
+	// crear tablas nuevas
+	if !dbtools.CreateAllTABLES(c, tables...) {
 		t.Fatal()
 	}
 
@@ -21,7 +25,7 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 	c.createTest(t)
 
 	for _, table := range tables {
-		db.ClonDATABLE(table)
+		dbtools.ClonDATABLE(c, table)
 	}
 
 	c.updateTest(t)

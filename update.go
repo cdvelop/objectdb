@@ -13,7 +13,7 @@ func (c Connection) UpdateObjects(table_name string, all_data ...map[string]stri
 
 	tx, err := c.DB.Begin()
 	if err != nil {
-		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		filterMessageDBtoClient(err.Error(), table_name, &message)
 		return
 	}
 
@@ -45,7 +45,7 @@ func (c Connection) UpdateObjects(table_name string, all_data ...map[string]stri
 
 		stmt, err := tx.Prepare(query)
 		if err != nil {
-			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			filterMessageDBtoClient(err.Error(), table_name, &message, data)
 			tx.Rollback()
 			return
 		}
@@ -53,14 +53,14 @@ func (c Connection) UpdateObjects(table_name string, all_data ...map[string]stri
 
 		_, err = stmt.Exec(values...)
 		if err != nil {
-			c.filterMessageDBtoClient(err.Error(), table_name, &message, data)
+			filterMessageDBtoClient(err.Error(), table_name, &message, data)
 			tx.Rollback()
 			return
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		c.filterMessageDBtoClient(err.Error(), table_name, &message)
+		filterMessageDBtoClient(err.Error(), table_name, &message)
 		tx.Rollback()
 		return
 	}

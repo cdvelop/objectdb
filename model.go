@@ -13,6 +13,7 @@ type databaseAdapter interface {
 
 type Connection struct {
 	*sql.DB
+	*dbtools.UnixID
 	err error
 	databaseAdapter
 }
@@ -22,5 +23,4 @@ type dbEngineAdapter interface {
 	DataBasEngine() string    //motor base de datos Postgres,MySQL,SQLite3 etc
 	DataBaseName() string     // nombre de la base de datos a conectar ej: "mydb"
 	ConnectionString() string //cadena con formato de conexión base de datos dns
-	GetNewID() string         // función que genera nuevo id exclusivo para la db elegida
 }

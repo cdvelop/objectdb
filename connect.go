@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	"github.com/cdvelop/dbtools"
 )
 
 func (c *Connection) Open() {
@@ -14,6 +16,7 @@ func (c *Connection) Open() {
 func Get(dba databaseAdapter) *Connection {
 
 	c := Connection{
+		UnixID:          dbtools.NewUnixIdHandler(),
 		databaseAdapter: dba,
 	}
 

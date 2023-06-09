@@ -6,11 +6,11 @@ import (
 	"github.com/cdvelop/dbtools"
 )
 
-func (c *Connection) TestCrudStart(t *testing.T, orm dbtools.OrmAdapter) {
+func (c *Connection) TestCrudStart(t *testing.T) {
 
 	tables := c.addTestModelTablesDataBase()
 
-	db := dbtools.NewOperationDB(c.DB, orm)
+	db := dbtools.NewOperationDB(c.DB, c)
 
 	if !db.CreateAllTABLES(tables...) {
 		t.Fatal()

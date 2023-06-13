@@ -13,7 +13,7 @@ func (c Connection) readTest(t *testing.T) {
 		if data.Result { //solo los casos de éxito
 
 			t.Run(("READ: "), func(t *testing.T) {
-				out := c.ReadObject(defaulTableName, data.IdRecovered)
+				out := c.ReadObject(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
 				if len(out) == 0 {
 					log.Fatalf("!!! READ data: [%v] resp\n", out)
 					t.Fail()

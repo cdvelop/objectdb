@@ -30,7 +30,7 @@ func (c Connection) deleteTest(t *testing.T) {
 					log.Fatalf("message: %v ok[%v]\n", mg, ok)
 				}
 
-				element_exists := c.ReadObject(defaulTableName, data.IdRecovered)
+				element_exists := c.ReadObject(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
 
 				if len(element_exists) != 0 {
 					log.Fatalf("Error no se borro elemento:\n %v\n En base de datos: %v\n", defaulTableName, c.DataBasEngine())

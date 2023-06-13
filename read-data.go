@@ -3,6 +3,7 @@ package objectdb
 import (
 	"fmt"
 	"log"
+	"strings"
 )
 
 // table name ej: users,products
@@ -36,12 +37,20 @@ func (c Connection) ReadAllObjects(table_name string, limit uint8, names_to_orde
 	return rowsMap
 }
 
-// ReadObject
-func (c Connection) ReadObject(table_name, id string) map[string]string {
-	sql := fmt.Sprintf("SELECT * FROM %v WHERE id_%v ='%v';", table_name, table_name, id)
+// ReadObject ej: user,map[string]string{"id_user","111"}
+func (c Connection) ReadObject(table_name string, where_fields map[string]string) map[string]string {
+	// Construir la cláusula WHERE
+	var whereConditions string
+	for field, value := range where_fields {
+		whereConditions += fmt.Sprintf("%s = '%s' AND ", field, value)
+	}
+	whereConditions = strings.TrimSuffix(whereConditions, " AND ")
+
+	// Construir la consulta SQL
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE %s;", table_name, whereConditions)
 	out, err := c.QueryOne(sql)
 	if err != nil {
-		log.Printf("Error al Obtener Ultima Data Tabla [%v] func ReadObject %v\nSQL: [%v]\n", table_name, err.Error(), sql)
+		log.Printf("Error al Obtener Última Data de la Tabla [%s] en la función ReadObject: %s\nSQL: [%s]\n", table_name, err.Error(), sql)
 		return nil
 	}
 

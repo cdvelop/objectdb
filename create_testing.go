@@ -17,8 +17,9 @@ func (c Connection) createTest(t *testing.T) {
 			}
 
 			// validar elemento aquí
-			if mg, ok := object.ValidateData(true, data.Data); !ok {
-				data.IdRecovered = mg
+			err := object.ValidateData(true, false, &data.Data)
+			if err != nil {
+				data.IdRecovered = err.Error()
 				return
 			}
 

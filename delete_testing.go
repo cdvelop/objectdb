@@ -20,8 +20,9 @@ func (c Connection) deleteTest(t *testing.T) {
 				}
 
 				// validar elemento aquí
-				if mg, ok := object.ValidateData(false, data.Data); !ok {
-					data.IdRecovered = mg
+				err := object.ValidateData(false, true, &data.Data)
+				if err != nil {
+					data.IdRecovered = err.Error()
 					return
 				}
 

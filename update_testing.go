@@ -22,9 +22,9 @@ func (c Connection) updateTest(t *testing.T) {
 				}
 
 				// validar elemento aquí
-				if mg, ok := object.ValidateData(false, data.Data); !ok {
-					log.Fatalln(mg)
-					return
+				err := object.ValidateData(false, true, &data.Data)
+				if err != nil {
+					log.Fatalln(err)
 				}
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
 				mg, ok := c.UpdateObjects(defaulTableName, data.Data)

@@ -27,11 +27,12 @@ func (c Connection) updateTest(t *testing.T) {
 					log.Fatalln(err)
 				}
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
-				err = c.UpdateObjects(defaulTableName, &data.Data)
+				err = c.UpdateObjects(defaulTableName, data.Data)
 				if err != nil {
 					log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
 
 				}
+
 			})
 		}
 	}

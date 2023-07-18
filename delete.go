@@ -5,7 +5,7 @@ import (
 )
 
 // DeleteObjects borra objetos de la base de datos según nombre de la tabla y ids.
-func (c Connection) DeleteObjects(table_name string, all_data ...*map[string]string) error {
+func (c Connection) DeleteObjects(table_name string, all_data ...map[string]string) error {
 	c.Open()
 	defer c.Close()
 
@@ -25,7 +25,7 @@ func (c Connection) DeleteObjects(table_name string, all_data ...*map[string]str
 			}
 			defer stmt.Close()
 
-			_, err = stmt.Exec((*data)["id_"+table_name])
+			_, err = stmt.Exec(data["id_"+table_name])
 			if err != nil {
 				tx.Rollback()
 				return filterMessageDBtoClient(err, table_name, data)

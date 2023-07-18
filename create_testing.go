@@ -22,7 +22,7 @@ func (c Connection) createTest(t *testing.T) {
 				return
 			}
 
-			err = c.CreateObjects(data.Object, &data.Data)
+			err = c.CreateObjects(data.Object, data.Data)
 			if err.Error() != data.ExpectedError {
 				log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
 			} else {

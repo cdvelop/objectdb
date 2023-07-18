@@ -7,7 +7,7 @@ import (
 )
 
 // UpdateObjects
-func (c Connection) UpdateObjects(table_name string, all_data ...*map[string]string) error {
+func (c Connection) UpdateObjects(table_name string, all_data ...map[string]string) error {
 	c.Open()
 	defer c.Close()
 
@@ -23,7 +23,7 @@ func (c Connection) UpdateObjects(table_name string, all_data ...*map[string]str
 			var field_pk string
 			var id_value string
 			var index uint8
-			for field, value := range *data {
+			for field, value := range data {
 				if _, pk := dbtools.IdpkTABLA(field, table_name); !pk {
 					index++
 

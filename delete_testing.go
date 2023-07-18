@@ -26,7 +26,7 @@ func (c Connection) deleteTest(t *testing.T) {
 					return
 				}
 
-				err = c.DeleteObjects(defaulTableName, &data.Data)
+				err = c.DeleteObjects(defaulTableName, data.Data)
 				if err.Error() != data.ExpectedError {
 					log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
 				}

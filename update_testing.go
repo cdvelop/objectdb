@@ -9,7 +9,7 @@ func (c Connection) updateTest(t *testing.T) {
 
 	for _, data := range dataTestCRUD {
 
-		if data.Result { //solo los casos de éxito
+		if data.ExpectedError == "" { //solo los casos que no contienen error
 
 			data.Data["id_usuario"] = data.IdRecovered
 			data.Data["apellido"] = "NUEVO APELLIDO"
@@ -27,9 +27,10 @@ func (c Connection) updateTest(t *testing.T) {
 					log.Fatalln(err)
 				}
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
-				mg, ok := c.UpdateObjects(defaulTableName, data.Data)
-				if !ok {
-					log.Fatalf("%v message: %v data in: \n[%v]", mg, ok, data.Data)
+				err = c.UpdateObjects(defaulTableName, &data.Data)
+				if err != nil {
+					log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
+
 				}
 			})
 		}

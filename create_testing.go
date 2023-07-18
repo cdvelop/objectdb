@@ -1,7 +1,6 @@
 package objectdb
 
 import (
-	"fmt"
 	"log"
 	"testing"
 )
@@ -9,7 +8,7 @@ import (
 func (c Connection) createTest(t *testing.T) {
 
 	for prueba, data := range dataTestCRUD {
-		t.Run(("CREATE: " + prueba + " " + fmt.Sprint(data.Result)), func(t *testing.T) {
+		t.Run(("CREATE: " + prueba), func(t *testing.T) {
 
 			object, exist := modelObjectForTest[data.Object]
 			if !exist {
@@ -23,9 +22,9 @@ func (c Connection) createTest(t *testing.T) {
 				return
 			}
 
-			mg, ok := c.CreateObjects(data.Object, data.Data)
-			if ok != data.Result {
-				log.Fatalf("Error: [%v]\n", mg)
+			err = c.CreateObjects(data.Object, &data.Data)
+			if err.Error() != data.ExpectedError {
+				log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
 			} else {
 				// si esta ok ejecuto test de lectura
 				objRead := dataTestCRUD[prueba]

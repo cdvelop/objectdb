@@ -5,32 +5,32 @@ import (
 	"strings"
 )
 
-func filterMessageDBtoClient(dbErr string, table_name string, out_message *string, all_data ...map[string]string) {
+func filterMessageDBtoClient(err error, table_name string, all_data ...*map[string]string) error {
 
-	if strings.Contains(dbErr, `delete`) && strings.Contains(dbErr, "viola la llave") {
-		*out_message = "¡Error No se puede eliminar!. Datos comprometidos en otra tabla"
-		return
+	if strings.Contains(err.Error(), `delete`) && strings.Contains(err.Error(), "viola la llave") {
+		return fmt.Errorf("¡Error No se puede eliminar!. Datos comprometidos en otra tabla")
 	}
 
-	if strings.Contains(dbErr, `llave duplicada`) {
+	if strings.Contains(err.Error(), `llave duplicada`) {
 		for _, data := range all_data {
-			fieldError, valueError := findFieldWithError(dbErr, data)
+			fieldError, valueError := findFieldWithError(err.Error(), data)
 			if fieldError != "" && valueError != "" {
-				*out_message = fmt.Sprintf("¡Error en el campo %v valor %v no se puede repetir!", fieldError, valueError)
-				return
+				return fmt.Errorf("¡Error en el campo %v valor %v no se puede repetir!", fieldError, valueError)
 			}
 		}
 	}
 
-	*out_message = dbErr
+	return err
 }
 
-func findFieldWithError(dbErr string, object map[string]string) (fieldError, valueError string) {
-	for key, value := range object {
-		if strings.Contains(dbErr, key) {
-			fieldError = key
-			valueError = value
-			break
+func findFieldWithError(dbErr string, object *map[string]string) (fieldError, valueError string) {
+	if object != nil {
+		for key, value := range *object {
+			if strings.Contains(dbErr, key) {
+				fieldError = key
+				valueError = value
+				break
+			}
 		}
 	}
 	return

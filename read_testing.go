@@ -10,7 +10,7 @@ func (c Connection) readTest(t *testing.T) {
 
 	for _, data := range dataTestCRUD {
 
-		if data.Result { //solo los casos de éxito
+		if data.ExpectedError == "" { //solo los casos de éxito
 
 			t.Run(("READ: "), func(t *testing.T) {
 				out := c.ReadObject(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})

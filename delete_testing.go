@@ -8,7 +8,7 @@ import (
 func (c Connection) deleteTest(t *testing.T) {
 
 	for _, data := range dataTestCRUD {
-		if data.Result { //solo los casos de éxito
+		if data.ExpectedError == "" { //solo los casos de éxito
 
 			data.Data["id_usuario"] = data.IdRecovered
 
@@ -26,9 +26,9 @@ func (c Connection) deleteTest(t *testing.T) {
 					return
 				}
 
-				mg, ok := c.DeleteObjects(defaulTableName, data.Data)
-				if !ok {
-					log.Fatalf("message: %v ok[%v]\n", mg, ok)
+				err = c.DeleteObjects(defaulTableName, &data.Data)
+				if err.Error() != data.ExpectedError {
+					log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
 				}
 
 				element_exists := c.ReadObject(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})

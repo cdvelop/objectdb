@@ -3,7 +3,7 @@ package objectdb
 type dataModelDBTest struct {
 	Object         string
 	Data           map[string]string
-	Result         bool
+	ExpectedError  string
 	IdRecovered    string
 	SkipValidation bool
 }

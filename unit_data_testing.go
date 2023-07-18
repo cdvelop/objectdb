@@ -11,47 +11,47 @@ func (c *Connection) addataCrud() {
 		"Luis campos correctos?": {
 			defaulTableName,
 			kv{"nombre": "Luis", "apellido": "de las carmenes", "genero": "V"},
-			true, "", false},
+			"", "", false},
 
 		"Maria campos correctos?": {
 			defaulTableName,
 			kv{"nombre": "Maria", "apellido": "Ruiz", "genero": "D"},
-			true, "", false},
+			"", "", false},
 
 		"Apellido en blanco Permitido?": {
 			defaulTableName,
 			kv{"nombre": "Arturo", "apellido": "", "genero": "V"},
-			true, "", false},
+			"", "", false},
 
 		"Genero en blanco Permitido?": {
 			defaulTableName,
 			kv{"nombre": "Marta", "apellido": "", "genero": ""},
-			false, "", false},
+			"ERROR", "", false},
 
 		"id + campos correctos?": {
 			defaulTableName,
 			kv{"id_" + defaulTableName: "123456", "nombre": "Juan", "apellido": "Soto", "genero": "V"},
-			true, "", false},
+			"", "", false},
 
 		"genero H existe?": {
 			defaulTableName,
 			kv{"nombre": "Marco", "apellido": "de las carmenes", "genero": "H"},
-			false, "", false},
+			"ERROR", "", false},
 
 		"apellido numérico, se requiere validación?": {
 			defaulTableName,
 			kv{"nombre": "Julia", "apellido": "2", "genero": "H"},
-			false, "", false},
+			"ERROR", "", false},
 
 		"nombre corresponde a solo texto?": {
 			defaulTableName,
 			kv{"nombre": "mar1a", "apellido": "de las carmenes"},
-			false, "", false},
+			"ERROR", "", false},
 
 		"todos los campos?": {
 			defaulTableName,
 			kv{"nombre": "Juana"},
-			false, "", false},
+			"ERROR", "", false},
 	}
 
 }

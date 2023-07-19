@@ -2,7 +2,7 @@ github.com/cdvelop/dbtools v0.0.22 h1:fFLAQ7ogoidAfpVuLkBSW/Ttc0y7hlkx562qICpVTE
 github.com/cdvelop/dbtools v0.0.22/go.mod h1:zI9A1z0moHODf4vdQTEKHtaKg10iX1J1vlorA2qhqmg=
 github.com/cdvelop/input v0.0.14 h1:P0c4HeA68af2jSRYJ2VCcRObHMkc+z6OBpATXfPOdCM=
 github.com/cdvelop/input v0.0.14/go.mod h1:+WGaDAU3UNEjCeQxIHiyi7BJRdnLV0aVzFhmBxa9eWU=
-github.com/cdvelop/model v0.0.33 h1:Q27TzCEmdIZpSaC9xiRhrsk389r10Pye4tyx8stZlJQ=
-github.com/cdvelop/model v0.0.33/go.mod h1:cYJNxbv1WV/aDgiVPV9VXs8LrbF8+0nU+X+KfSevyzw=
+github.com/cdvelop/model v0.0.34 h1:pwJsUqcAh+70PedzD8+cTWnCmhjFsE4W5RqSJwG/KsM=
+github.com/cdvelop/model v0.0.34/go.mod h1:cYJNxbv1WV/aDgiVPV9VXs8LrbF8+0nU+X+KfSevyzw=
 golang.org/x/text v0.11.0 h1:LAntKIrcmeSKERyiOh0XMV39LXS8IE9UL2yP7+f5ij4=
 golang.org/x/text v0.11.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=

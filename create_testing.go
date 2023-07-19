@@ -23,8 +23,11 @@ func (c Connection) createTest(t *testing.T) {
 			}
 
 			err = c.CreateObjects(data.Object, data.Data)
-			if err.Error() != data.ExpectedError {
-				log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
+			if err != nil {
+				if err.Error() != data.ExpectedError {
+					log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
+				}
+
 			} else {
 				// si esta ok ejecuto test de lectura
 				objRead := dataTestCRUD[prueba]

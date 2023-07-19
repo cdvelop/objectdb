@@ -29,8 +29,9 @@ func (c Connection) updateTest(t *testing.T) {
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
 				err = c.UpdateObjects(defaulTableName, data.Data)
 				if err != nil {
-					log.Fatalf("Error esperado: [%v] pero se obtuvo: [%v]\n%v", data.ExpectedError, err, data.Object)
-
+					if err.Error() != data.ExpectedError {
+						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
+					}
 				}
 
 			})

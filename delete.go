@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-// DeleteObjects borra objetos de la base de datos según nombre de la tabla y ids.
-func (c Connection) DeleteObjects(table_name string, all_data ...map[string]string) error {
+// DeleteObjectsInDB borra objetos de la base de datos según nombre de la tabla y ids.
+func (c Connection) DeleteObjectsInDB(table_name string, all_data ...map[string]string) error {
 	c.Open()
 	defer c.Close()
 

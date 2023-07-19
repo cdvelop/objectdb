@@ -5,8 +5,8 @@ import (
 	"strings"
 )
 
-// CreateObjects
-func (c Connection) CreateObjects(table_name string, all_data ...map[string]string) error {
+// CreateObjectsInDB
+func (c Connection) CreateObjectsInDB(table_name string, all_data ...map[string]string) error {
 	c.Open()
 	defer c.Close()
 

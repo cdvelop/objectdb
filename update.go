@@ -6,8 +6,8 @@ import (
 	"github.com/cdvelop/dbtools"
 )
 
-// UpdateObjects
-func (c Connection) UpdateObjects(table_name string, all_data ...map[string]string) error {
+// UpdateObjectsInDB
+func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]string) error {
 	c.Open()
 	defer c.Close()
 

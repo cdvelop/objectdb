@@ -26,7 +26,7 @@ func (c Connection) deleteTest(t *testing.T) {
 					return
 				}
 
-				err = c.DeleteObjects(defaulTableName, data.Data)
+				err = c.DeleteObjectsInDB(defaulTableName, data.Data)
 				if err != nil {
 					if err.Error() != data.ExpectedError {
 						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
@@ -34,7 +34,10 @@ func (c Connection) deleteTest(t *testing.T) {
 
 				} else {
 
-					element_exists := c.ReadObject(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
+					element_exists, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
+					if err != nil {
+						log.Fatalln("error en test de lectura ", err, data)
+					}
 
 					if len(element_exists) != 0 {
 						log.Fatalf("Error no se borro elemento:\n %v\n En base de datos: %v\n", defaulTableName, c.DataBasEngine())

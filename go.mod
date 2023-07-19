@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/cdvelop/dbtools v0.0.21
+	github.com/cdvelop/dbtools v0.0.22
 	golang.org/x/text v0.11.0 // indirect
 )
 

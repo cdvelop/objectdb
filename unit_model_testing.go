@@ -22,7 +22,7 @@ func (genero) SourceData() map[string]string {
 }
 
 var (
-	modelObjectForTest = map[string]model.Object{
+	modelObjectForTest = map[string]*model.Object{
 
 		defaulTableName: {
 			Name: defaulTableName,
@@ -55,8 +55,8 @@ var (
 	}
 )
 
-func (c *Connection) addTestModelTablesDataBase() []model.Object {
-	return []model.Object{
+func (c *Connection) addTestModelTablesDataBase() []*model.Object {
+	return []*model.Object{
 		modelObjectForTest[defaulTableName],
 		modelObjectForTest["especialidad"],
 		modelObjectForTest["credentials"],

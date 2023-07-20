@@ -7,8 +7,9 @@ import (
 )
 
 // table name ej: users,products
-// limit ej 10, 5, 100. 0 no limit etc. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
-// order_by ej: name,phone,address
+// limit: ej 10, 5, 100. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
+// order_by: ej: name,phone,address
+// choose:"name, phone, address" default *
 func (c Connection) ReadObjectsInDB(table_name string, params map[string]string) ([]map[string]string, error) {
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (
@@ -18,6 +19,7 @@ func (c Connection) ReadObjectsInDB(table_name string, params map[string]string)
 		limit_clause       string
 		args               []interface{}
 		place_holder_index uint8
+		choose             = "*"
 	)
 
 	for key, value := range params {
@@ -50,18 +52,16 @@ func (c Connection) ReadObjectsInDB(table_name string, params map[string]string)
 				}
 			}
 
-		default:
-			place_holder_index++
-			args = append(args, value)
+		case key == "choose": //campos específicos a seleccionar
+			choose = value
 
 		}
-
 	}
 
 	// Construir la consulta SQL
-	sql := fmt.Sprintf("SELECT * FROM %s%s%s%s;", table_name, where_conditions, order_by, limit_clause)
+	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, table_name, where_conditions, order_by, limit_clause)
 
-	fmt.Println("SQL READ: ", sql)
+	// fmt.Println("SQL READ: ", sql)
 
 	// Ejecutar la consulta y obtener los resultados
 	var rowsMap []map[string]string

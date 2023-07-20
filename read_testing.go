@@ -21,7 +21,7 @@ func (c *Connection) readTest(tables []*model.Object, t *testing.T) {
 		}
 	}
 
-	fmt.Println("STORE DATA: ", data_original)
+	// fmt.Println("STORE DATA: ", data_original)
 
 	// clonamos las tablas
 	for _, table := range tables {
@@ -31,96 +31,85 @@ func (c *Connection) readTest(tables []*model.Object, t *testing.T) {
 		}
 	}
 
-	//1- leemos la base de datos con la tabla usuario y la misma cantidad de creados.
+	//Caso 1 leemos la base de datos con la tabla usuario y la misma cantidad de creados.
 	// se esperan idénticos resultados
 	data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"limit": fmt.Sprint(total_creations)})
 	if err != nil {
-		log.Fatalln("error en test de lectura ", err)
+		log.Fatalln("Caso 1 error en test de lectura ", err)
 	}
 
 	if !gotools.AreSliceMapsIdentical(data_original, data_stored) {
-		fmt.Println("error la data deberían ser idéntica:")
+		fmt.Println("Caso 1 error la data deberían ser idéntica:")
 		fmt.Println("data original: ", data_original)
 		fmt.Println()
 		fmt.Println("data almacenada: ", data_stored)
 		log.Fatal()
 	}
 
-	//2- consulta con orden por nombre se espera un resultado diferente
-	data_stored2, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"order_by": "nombre", "limit": fmt.Sprint(total_creations)})
+	//Caso 2 consulta con orden por nombre Asc, se espera un resultado con limite 2
+	data_stored2, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"order_by": "nombre", "limit": "2"})
 	if err != nil {
-		log.Fatalln("error en test de lectura ", err)
+		log.Fatalln("Caso 2 error en test de lectura ", err)
 	}
 
 	// el primer elemento debe ser Arturo
-	fist_name := data_original[0]["nombre"]
+	fist_name := data_stored2[0]["nombre"]
 	if fist_name != "Arturo" {
-		log.Fatalln(" se esperaba como primer nombre Arturo pero se obtuvo: ", fist_name)
+		log.Fatalln("Caso 2 se esperaba como primer nombre Arturo pero se obtuvo: ", fist_name)
 	}
 
 	if gotools.AreSliceMapsIdentical(data_original, data_stored2) {
-		log.Fatalln("error la data deberían ser diferente:")
+		log.Fatalln("Caso 2 error la data deberían ser diferente:")
 		log.Fatalln("data original: ", data_original)
 		log.Fatalln("data almacenada: ", data_stored2)
 	}
 
-	//3- consulta con limite 2 se espera solo dos elementos
-	data_stored, err = c.ReadObjectsInDB(defaulTableName, map[string]string{"limit": fmt.Sprint(total_creations)})
+	//Caso 3 consulta con limite 1 se espera solo 1 elemento
+	data_stored3, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"limit": "1"})
 	if err != nil {
-		log.Fatalln("error en test de lectura ", err)
+		log.Fatalln("Caso 3 error en test de lectura ", err)
 	}
-	fmt.Println("DATA ORDENADA POR NOMBRE: ", data_stored)
 
-	// var testData = map[string]struct {
-	// 	data   kv
-	// 	expect int
-	// }{
-	// 	"consulta por todos los elemento que fueron cambiados en la tabla " + defaulTableName: {data: kv{"apellido": "NUEVO APELLIDO"}, expect: total_creations},
-	// }
+	if len(data_stored3) != 1 {
+		log.Fatalln("Caso 3 error se espera solo 1 elemento pero se obtuvo: ", len(data_stored3))
+	}
 
-	// fmt.Println("CREACIONES: ", total_creations)
+	//Caso 4 consulta por campos específicos nombre y genero
+	data_stored4, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"choose": "nombre, genero"})
+	if err != nil {
+		log.Fatalln("Caso 4 error en test de lectura ", err)
+	}
 
-	// for testName, d := range testData {
-	// 	t.Run(testName, func(t *testing.T) {
+	// fmt.Println("Caso 4 SELECCIÓN ESPECIFICA: ", data_stored4)
 
-	// 		out, err := c.ReadObjectsInDB(defaulTableName, d.data)
-	// 		if err != nil {
-	// 			log.Fatalln("error en test de lectura ", err, d)
-	// 		}
+	if len(data_stored4) != total_creations {
+		log.Fatalf("Caso 4 error se esperaban: %v resultados pero se obtuvieron: %v", total_creations, len(data_stored4))
+	}
 
-	// 		if len(out) != d.expect {
-	// 			log.Fatalf("Para entrada '%v', se esperaba '%v' pero se obtuvo '%v'", d.data, d.expect, len(out))
-	// 		}
+	for _, data := range data_stored4 {
+		if len(data) != 2 {
+			log.Fatalf("Caso 4 error se esperaban: %v elementos pero se obtuvieron: %v\n%v", 2, len(data), data)
+		}
+	}
 
-	// 		fmt.Println(d)
+	// Caso 5 consulta con mapa nulo se espera todos los datos de la tabla
+	data_stored5, err := c.ReadObjectsInDB(defaulTableName, nil)
+	if err != nil {
+		log.Fatalln("Caso 5 error en test de lectura ", err)
+	}
 
-	// 	})
-	// }
+	if !gotools.AreSliceMapsIdentical(data_original, data_stored5) {
+		fmt.Println("Caso 5 error la data deberían ser idéntica:")
+		fmt.Println("data original: ", data_original)
+		fmt.Println()
+		fmt.Println("data almacenada: ", data_stored5)
+		log.Fatal()
+	}
+
+	//Caso 6 consulta con tabla que no existe se espera error
+	data_stored6, err := c.ReadObjectsInDB("tabla_X", nil)
+	if err == nil {
+		log.Fatalln("Caso 6 se esperaba error y se obtuvo data: ", data_stored6)
+	}
 
 }
-
-// for _, data := range dataTestCRUD {
-
-// 	if data.ExpectedError == "" { //solo los casos de éxito
-
-// 		t.Run(("READ: "), func(t *testing.T) {
-// 			out, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
-// 			if err != nil {
-// 				log.Fatalln("error en test de lectura ", err, data)
-// 			}
-
-// 			if len(out) == 0 {
-// 				log.Fatalf("!!! READ data: [%v] resp\n", out)
-// 			}
-
-// 			// fmt.Println("=> DATA CAMBIADA?:", out)
-// 			for _, o := range out {
-
-// 				if !strings.Contains(o["apellido"], "NUEVO APELLIDO") {
-// 					log.Fatalln("ERROR APELLIDO NUEVO NO CAMBIADO SALIDA:\n", out)
-// 				}
-// 			}
-
-// 		})
-// 	}
-// }

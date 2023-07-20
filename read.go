@@ -61,6 +61,8 @@ func (c Connection) ReadObjectsInDB(table_name string, params map[string]string)
 	// Construir la consulta SQL
 	sql := fmt.Sprintf("SELECT * FROM %s%s%s%s;", table_name, where_conditions, order_by, limit_clause)
 
+	fmt.Println("SQL READ: ", sql)
+
 	// Ejecutar la consulta y obtener los resultados
 	var rowsMap []map[string]string
 	var err error

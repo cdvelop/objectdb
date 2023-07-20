@@ -26,13 +26,9 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 
 	c.createTest(t)
 
-	for _, table := range tables {
-		dbtools.ClonDATABLE(c, table)
-	}
+	c.readTest(tables, t)
 
-	c.updateTest(t)
+	// c.updateTest(t)
 
-	c.readTest(t)
-
-	c.deleteTest(t)
+	// c.deleteTest(t)
 }

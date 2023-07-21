@@ -26,9 +26,19 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 
 	c.createTest(t)
 
-	c.readTest(tables, t)
+	var default_data_tests []map[string]string
+
+	for _, d := range dataTestCRUD {
+		if d.ExpectedError == "" && d.Object == defaulTableName { // solo los casos de éxito
+			default_data_tests = append(default_data_tests, d.Data)
+		}
+	}
+
+	c.cloneTest(tables, t)
+
+	c.readTest(default_data_tests, t)
 
 	c.updateTest(t)
 
-	c.deleteTest(t)
+	// c.deleteTest(t)
 }

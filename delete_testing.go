@@ -1,6 +1,7 @@
 package objectdb
 
 import (
+	"fmt"
 	"log"
 	"testing"
 )
@@ -10,9 +11,7 @@ func (c Connection) deleteTest(t *testing.T) {
 	for _, data := range dataTestCRUD {
 		if data.ExpectedError == "" { //solo los casos de éxito
 
-			data.Data["id_usuario"] = data.IdRecovered
-
-			t.Run(("DELETE: " + data.IdRecovered), func(t *testing.T) {
+			t.Run(("DELETE: " + data.Data["nombre"]), func(t *testing.T) {
 
 				object, exist := modelObjectForTest[data.Object]
 				if !exist {
@@ -22,11 +21,10 @@ func (c Connection) deleteTest(t *testing.T) {
 				// validar elemento aquí
 				err := object.ValidateData(false, true, &data.Data)
 				if err != nil {
-					data.IdRecovered = err.Error()
-					return
+					log.Fatal(err)
 				}
 
-				err = c.DeleteObjectsInDB(defaulTableName, data.Data)
+				notify_data, err := c.DeleteObjectsInDB(defaulTableName, data.Data)
 				if err != nil {
 					if err.Error() != data.ExpectedError {
 						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
@@ -34,7 +32,7 @@ func (c Connection) deleteTest(t *testing.T) {
 
 				} else {
 
-					element_exists, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
+					element_exists, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
 					if err != nil {
 						log.Fatalln("error en test de lectura ", err, data)
 					}
@@ -44,6 +42,8 @@ func (c Connection) deleteTest(t *testing.T) {
 
 					}
 				}
+
+				fmt.Println("DATA PARA NOTIFICACIÓN DE ELIMINACIÓN ", notify_data)
 			})
 		}
 	}

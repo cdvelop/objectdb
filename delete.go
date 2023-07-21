@@ -5,13 +5,20 @@ import (
 )
 
 // DeleteObjectsInDB borra objetos de la base de datos según nombre de la tabla y ids.
-func (c Connection) DeleteObjectsInDB(table_name string, all_data ...map[string]string) error {
+func (c Connection) DeleteObjectsInDB(table_name string, all_data ...map[string]string) ([]map[string]string, error) {
 	c.Open()
 	defer c.Close()
 
+	// fmt.Println("DeleteObjectsInDB RECUPERAR DATA ANTES DE BORRARLA")
+
+	delete_data_notify, err := c.ReadObjectsInDB(table_name, all_data...)
+	if err != nil {
+		return nil, fmt.Errorf("no se logro obtener la información de la tabla %v para notificar %v antes de realizar la eliminación ", table_name, err)
+	}
+
 	tx, err := c.Begin()
 	if err != nil {
-		return filterMessageDBtoClient(err, table_name)
+		return nil, filterMessageDBtoClient(err, table_name)
 	}
 
 	for _, data := range all_data {
@@ -21,22 +28,22 @@ func (c Connection) DeleteObjectsInDB(table_name string, all_data ...map[string]
 			stmt, err := tx.Prepare(query)
 			if err != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return nil, filterMessageDBtoClient(err, table_name, data)
 			}
 			defer stmt.Close()
 
 			_, err = stmt.Exec(data["id_"+table_name])
 			if err != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return nil, filterMessageDBtoClient(err, table_name, data)
 			}
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
-		return filterMessageDBtoClient(err, table_name)
+		return nil, filterMessageDBtoClient(err, table_name)
 	}
 
-	return nil
+	return delete_data_notify, nil
 }

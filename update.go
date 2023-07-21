@@ -7,13 +7,13 @@ import (
 )
 
 // UpdateObjectsInDB
-func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]string) error {
+func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]string) ([]map[string]string, error) {
 	c.Open()
 	defer c.Close()
 
 	tx, err := c.DB.Begin()
 	if err != nil {
-		return filterMessageDBtoClient(err, table_name)
+		return nil, filterMessageDBtoClient(err, table_name)
 	}
 
 	for _, data := range all_data {
@@ -46,22 +46,29 @@ func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]
 			stmt, err := tx.Prepare(query)
 			if err != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return nil, filterMessageDBtoClient(err, table_name, data)
 			}
 			defer stmt.Close()
 
 			_, err = stmt.Exec(values...)
 			if err != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return nil, filterMessageDBtoClient(err, table_name, data)
 			}
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
 		tx.Rollback()
-		return filterMessageDBtoClient(err, table_name)
+		return nil, filterMessageDBtoClient(err, table_name)
 	}
 
-	return nil
+	// fmt.Println("UpdateObjectsInDB RETORNAR DATA ACTUALIZADA PARA NOTIFICAR")
+
+	updated_data_notify, err := c.ReadObjectsInDB(table_name, all_data...)
+	if err != nil {
+		return nil, fmt.Errorf("se actualizo correctamente %v pero no se logro obtener la información para notificar %v", table_name, err)
+	}
+
+	return updated_data_notify, nil
 }

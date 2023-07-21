@@ -28,7 +28,7 @@ var (
 			Name: defaulTableName,
 			Fields: []model.Field{
 				{Name: "id_" + defaulTableName, Input: input.Number()},
-				{Name: "nombre", Unique: true, Input: input.Text()},
+				{Name: "nombre", Unique: true, Input: input.TextOnly()},
 				{Name: "apellido", Input: input.Text(), SkipCompletionAllowed: true},
 				{Name: "genero", Input: input.Radio(genero{})},
 			},

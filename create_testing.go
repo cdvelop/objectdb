@@ -18,22 +18,28 @@ func (c Connection) createTest(t *testing.T) {
 			// validar elemento aquí
 			err := object.ValidateData(true, false, &data.Data)
 			if err != nil {
-				data.IdRecovered = err.Error()
-				return
-			}
-
-			err = c.CreateObjectsInDB(data.Object, data.Data)
-			if err != nil {
-				if err.Error() != data.ExpectedError {
+				if data.ExpectedError == "" {
 					log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
 				}
-
+				return
 			} else {
-				// si esta ok ejecuto test de lectura
-				objRead := dataTestCRUD[prueba]
-				objRead.IdRecovered = data.Data["id_"+data.Object]
-				dataTestCRUD[prueba] = objRead
+
+				err = c.CreateObjectsInDB(data.Object, data.Data)
+				if err != nil {
+					if err.Error() != data.ExpectedError {
+						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
+					}
+
+				}
+
 			}
+
+			// else {
+			// 	// si esta ok ejecuto test de lectura
+			// 	objRead := dataTestCRUD[prueba]
+			// 	objRead.IdRecovered = data.Data["id_"+data.Object]
+			// 	dataTestCRUD[prueba] = objRead
+			// }
 
 		})
 	}

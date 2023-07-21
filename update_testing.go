@@ -12,13 +12,15 @@ func (c Connection) updateTest(t *testing.T) {
 
 		if data.ExpectedError == "" { //solo los casos que no contienen error
 
-			data.Data["id_usuario"] = data.IdRecovered
+			// fmt.Println("ID PARA ACTUALIZAR: ", data.Data["id_"+defaulTableName])
+
 			data.Data["apellido"] = "NUEVO APELLIDO"
 
+			name := data.Data["nombre"]
 			//removemos nombre ya que es un campo único en el modelo y no se puede actualizar
 			delete(data.Data, "nombre")
 
-			t.Run(("UPDATE: " + data.IdRecovered), func(t *testing.T) {
+			t.Run(("UPDATE: apellido de: " + name), func(t *testing.T) {
 
 				object, exist := modelObjectForTest[data.Object]
 				if !exist {
@@ -33,12 +35,14 @@ func (c Connection) updateTest(t *testing.T) {
 					log.Fatalln(err)
 				}
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
-				err = c.UpdateObjectsInDB(defaulTableName, data.Data)
+				_, err = c.UpdateObjectsInDB(defaulTableName, data.Data)
 				if err != nil {
 					if err.Error() != data.ExpectedError {
 						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
 					}
 				}
+
+				// fmt.Println("DATA PARA NOTIFICACIÓN DE ACTUALIZACIÓN ", notify_data)
 
 			})
 		}
@@ -49,8 +53,8 @@ func (c Connection) updateTest(t *testing.T) {
 
 		if data.ExpectedError == "" { //solo los casos de éxito
 
-			t.Run(("READ: "), func(t *testing.T) {
-				out, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.IdRecovered})
+			t.Run(("UPDATE READ CHECK: "), func(t *testing.T) {
+				out, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
 				if err != nil {
 					log.Fatalln("error en test de lectura ", err, data)
 				}
@@ -61,14 +65,11 @@ func (c Connection) updateTest(t *testing.T) {
 
 				// fmt.Println("=> DATA CAMBIADA?:", out)
 				for _, o := range out {
-
 					if !strings.Contains(o["apellido"], "NUEVO APELLIDO") {
 						log.Fatalln("ERROR APELLIDO NUEVO NO CAMBIADO SALIDA:\n", out)
 					}
 				}
-
 			})
 		}
 	}
-
 }

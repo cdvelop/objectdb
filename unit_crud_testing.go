@@ -40,5 +40,5 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 
 	c.updateTest(t)
 
-	// c.deleteTest(t)
+	c.deleteTest(t)
 }

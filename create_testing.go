@@ -16,7 +16,7 @@ func (c Connection) createTest(t *testing.T) {
 			}
 
 			// validar elemento aquí
-			err := object.ValidateData(true, false, &data.Data)
+			err := object.ValidateData(true, false, data.Data)
 			if err != nil {
 				if data.ExpectedError == "" {
 					log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)

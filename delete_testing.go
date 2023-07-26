@@ -18,7 +18,7 @@ func (c Connection) deleteTest(t *testing.T) {
 				}
 
 				// validar elemento aquí
-				err := object.ValidateData(false, true, &data.Data)
+				err := object.ValidateData(false, true, data.Data)
 				if err != nil {
 					log.Fatal(err)
 				}

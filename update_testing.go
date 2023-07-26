@@ -30,7 +30,7 @@ func (c Connection) updateTest(t *testing.T) {
 				// fmt.Println("DATA A ACTUALIZAR: ", data.Data)
 
 				// validar elemento aquí
-				err := object.ValidateData(false, true, &data.Data)
+				err := object.ValidateData(false, true, data.Data)
 				if err != nil {
 					log.Fatalln(err)
 				}

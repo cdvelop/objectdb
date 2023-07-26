@@ -9,11 +9,11 @@ require (
 
 require (
 	github.com/cdvelop/dbtools v0.0.24
-	github.com/cdvelop/gotools v0.0.17
+	github.com/cdvelop/gotools v0.0.18
 	golang.org/x/text v0.11.0 // indirect
 )
 
-// replace github.com/cdvelop/model => ../model
+replace github.com/cdvelop/model => ../model
 
 replace github.com/cdvelop/dbtools => ../dbtools
 

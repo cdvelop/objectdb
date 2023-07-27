@@ -26,7 +26,10 @@ func (c *Connection) CreateTablesInDB(tables ...*model.Object) error {
 	return nil
 }
 
-func (c Connection) TableExist(table_name string) (bool, error) {
+func (c *Connection) TableExist(table_name string) (bool, error) {
+	c.Open()
+	defer c.Close()
+
 	rows, err := c.Query(c.SQLTableExist(), table_name)
 	if err != nil {
 		return false, err

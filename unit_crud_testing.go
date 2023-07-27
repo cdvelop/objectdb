@@ -17,7 +17,7 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 	}
 
 	// crear tablas nuevas
-	err := dbtools.CreateAllTABLES(c, tables...)
+	err := dbtools.CreateTablesInDB(c, tables...)
 	if err != nil {
 		log.Fatalln(err)
 	}

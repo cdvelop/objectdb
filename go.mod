@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/cdvelop/input v0.0.15
-	github.com/cdvelop/model v0.0.34
+	github.com/cdvelop/model v0.0.35
 )
 
 require (
@@ -19,4 +19,4 @@ replace github.com/cdvelop/dbtools => ../dbtools
 
 replace github.com/cdvelop/gotools => ../gotools
 
-// replace github.com/cdvelop/input => ../input
+replace github.com/cdvelop/input => ../input

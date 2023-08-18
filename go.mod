@@ -3,7 +3,7 @@ module github.com/cdvelop/objectdb
 go 1.20
 
 require (
-	github.com/cdvelop/input v0.0.15
+	github.com/cdvelop/input v0.0.19
 	github.com/cdvelop/model v0.0.37
 )
 

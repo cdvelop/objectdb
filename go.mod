@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/cdvelop/input v0.0.21
-	github.com/cdvelop/model v0.0.40
+	github.com/cdvelop/model v0.0.41
 )
 
 require (

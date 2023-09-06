@@ -31,7 +31,7 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 2 consulta con orden por nombre Asc, se espera un resultado con limite 2`), func(t *testing.T) {
-		data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"order_by": "nombre", "limit": "2"})
+		data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"ORDER_BY": "nombre", "LIMIT": "2"})
 		if err != nil {
 			log.Fatalln("Caso 2 error en test de lectura ", err)
 		}
@@ -50,7 +50,7 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 3 consulta con limite 1 se espera solo 1 elemento`), func(t *testing.T) {
-		data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"limit": "1"})
+		data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"LIMIT": "1"})
 		if err != nil {
 			log.Fatalln("Caso 3 error en test de lectura ", err)
 		}
@@ -61,7 +61,7 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 4 consulta por campos específicos nombre y genero`), func(t *testing.T) {
-		data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"choose": "nombre, genero"})
+		data_stored, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"SELECT": "nombre, genero"})
 		if err != nil {
 			log.Fatalln("Caso 4 error en test de lectura ", err)
 		}
@@ -133,5 +133,25 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 			log.Fatalln("se esperaba error y se obtuvo data: ", data_stored)
 		}
 	})
+
+	// t.Run((`READ: Caso 9 consulta con sql y argumentos se espera ok`), func(t *testing.T) {
+
+	// 		// el primer elemento debe ser Arturo
+	// 			fist_name := data_stored[0]["nombre"]
+
+	// 	query := map[string]string{
+
+	// 		"args": fist_name,
+	// 	}
+
+	// 	data_stored, err := c.ReadObjectsInDB(defaulTableName, query)
+	// 	if err == nil {
+	// 		log.Printf("no se esperaba error: %v", err)
+	// 	}
+
+	// 	if len(data_stored) != total_creations {
+	// 		log.Printf("-se esperaban: %v registros\n-pero se obtuvieron: %v\n-%v", total_creations, len(data_stored), data_stored)
+	// 	}
+	// })
 
 }

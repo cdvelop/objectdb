@@ -6,11 +6,15 @@ import (
 	"strings"
 )
 
-// table name ej: users,products
-// limit: ej 10, 5, 100. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
-// order_by: ej: name,phone,address
-// choose:"name, phone, address" default *
-func (c Connection) ReadObjectsInDB(table_name string, data ...map[string]string) ([]map[string]string, error) {
+// from_tables ej: "users,products" or: public.reservation, public.patient"
+// data ... map[string]string ej:{
+// LIMIT: 10, 5, 100. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
+// ORDER_BY: name,phone,address
+// SELECT: "name, phone, address" default *
+// WHERE: "patient.id_patient = reservation.id_patient AND reservation.id_staff = '2'"
+// ARGS: "1,4,33"
+// }
+func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]string) ([]map[string]string, error) {
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (
 		// read_all           = true
@@ -28,7 +32,8 @@ func (c Connection) ReadObjectsInDB(table_name string, data ...map[string]string
 		for key, value := range params {
 
 			switch {
-			case key == "id_"+table_name:
+
+			case key == "id_"+from_tables:
 				total_ids_found++
 				place_holder_index++
 
@@ -42,7 +47,7 @@ func (c Connection) ReadObjectsInDB(table_name string, data ...map[string]string
 
 				args = append(args, value)
 
-			case key == "limit": // Verificar si se proporciona un límite para la consulta
+			case key == "LIMIT": // Verificar si se proporciona un límite para la consulta
 				limit, err := strconv.Atoi(value)
 				if err != nil {
 					return nil, err
@@ -51,27 +56,31 @@ func (c Connection) ReadObjectsInDB(table_name string, data ...map[string]string
 				limit_clause = " LIMIT " + c.PlaceHolders(place_holder_index) // según db
 				args = append(args, limit)
 
-			case key == "order_by": // Verificar si se proporcionan nombres para ordenar
-
+			case key == "ORDER_BY": // Verificar si se proporcionan nombres para ordenar
+				var comma string
 				names_to_order := strings.Split(value, ",")
-				for i, field_name := range names_to_order {
+				for _, field_name := range names_to_order {
 
-					if i == 0 {
-						order_by = ` ORDER BY ` + field_name + ` ASC`
-					} else {
-						order_by += `, ORDER BY ` + field_name + ` ASC`
-					}
+					order_by += comma + ` ORDER BY ` + field_name + ` ASC`
+					comma = `,`
 				}
 
-			case key == "choose": //campos específicos a seleccionar
+			case key == "SELECT": //campos específicos a seleccionar
 				choose = value
+
+			case key == "WHERE": //se envió una consulta con where
+				where_conditions = value
+
+			case key == "ARGS": //se envió una consulta con where
+				new_args := strings.Split(value, ",")
+				args = append(args, new_args)
 
 			}
 		}
 	}
 
 	// Construir la consulta SQL
-	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, table_name, where_conditions, order_by, limit_clause)
+	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, from_tables, where_conditions, order_by, limit_clause)
 
 	// fmt.Println("SQL READ: ", sql)
 	// fmt.Println("ARGUMENTOS ", args)

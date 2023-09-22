@@ -58,10 +58,11 @@ func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]strin
 
 			case key == "ORDER_BY": // Verificar si se proporcionan nombres para ordenar
 				var comma string
+				order_by += ` ORDER BY `
 				names_to_order := strings.Split(value, ",")
 				for _, field_name := range names_to_order {
 
-					order_by += comma + ` ORDER BY ` + field_name + ` ASC`
+					order_by += comma + field_name
 					comma = `,`
 				}
 
@@ -69,7 +70,7 @@ func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]strin
 				choose = value
 
 			case key == "WHERE": //se envió una consulta con where
-				where_conditions = value
+				where_conditions = " WHERE " + value
 
 			case key == "ARGS": //se envió una consulta con where
 				new_args := strings.Split(value, ",")

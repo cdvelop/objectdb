@@ -10,7 +10,7 @@ import (
 func (c *Connection) CreateTablesInDB(tables ...*model.Object) error {
 
 	for _, t := range tables {
-		if exist, err := c.TableExist(t.Name); !exist {
+		if exist, err := c.TableExist(t.Table); !exist {
 
 			if err != nil {
 				return err
@@ -18,7 +18,7 @@ func (c *Connection) CreateTablesInDB(tables ...*model.Object) error {
 
 			err := dbtools.CreateOneTABLE(c, t)
 			if err != nil {
-				return fmt.Errorf("no se logro crear tabla: %v\n%v", t.Name, err)
+				return fmt.Errorf("no se logro crear tabla: %v\n%v", t.Table, err)
 			}
 		}
 	}

@@ -25,7 +25,8 @@ var (
 	modelObjectForTest = map[string]*model.Object{
 
 		defaulTableName: {
-			Name: defaulTableName,
+			Name:  defaulTableName,
+			Table: defaulTableName,
 			Fields: []model.Field{
 				{Name: "id_" + defaulTableName, Input: input.Number()},
 				{Name: "nombre", Unique: true, Input: input.TextOnly()},
@@ -35,7 +36,8 @@ var (
 		},
 
 		"especialidad": {
-			Name: "especialidad",
+			Name:  "especialidad",
+			Table: "especialidad",
 			Fields: []model.Field{
 				{Name: "id_especialidad"},
 				{Name: "nombre_especialidad", Unique: true},
@@ -45,7 +47,8 @@ var (
 		},
 
 		"credentials": {
-			Name: "credentials",
+			Name:  "credentials",
+			Table: "credentials",
 			Fields: []model.Field{
 				{Name: "id_" + "credentials"},
 				{Name: "id_" + defaulTableName},

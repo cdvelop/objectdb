@@ -7,7 +7,7 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (c *Connection) CreateTablesInDB(tables ...*model.Object) error {
+func (c *Connection) CreateTablesInDB(tables []*model.Object, action model.Subsequently) error {
 
 	for _, t := range tables {
 		if exist, err := c.TableExist(t.Table); !exist {

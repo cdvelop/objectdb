@@ -4,7 +4,13 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+
+	"github.com/cdvelop/model"
 )
+
+func (c Connection) ReadDataAsyncInDB(from_tables string, params []map[string]string, callback func([]map[string]string, error)) {
+	callback(nil, model.Error("error ReadDataAsyncInDB no implementado en paquete objectdb"))
+}
 
 // from_tables ej: "users,products" or: public.reservation, public.patient"
 // data ... map[string]string ej:{
@@ -14,6 +20,7 @@ import (
 // WHERE: "patient.id_patient = reservation.id_patient AND reservation.id_staff = '2'"
 // ARGS: "1,4,33"
 // }
+
 func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]string) ([]map[string]string, error) {
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (

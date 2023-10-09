@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/cdvelop/dbtools"
+	"github.com/cdvelop/unixid"
 )
 
 type databaseAdapter interface {
@@ -13,7 +14,7 @@ type databaseAdapter interface {
 
 type Connection struct {
 	*sql.DB
-	*dbtools.UnixID
+	*unixid.UnixID
 	err error
 	databaseAdapter
 }

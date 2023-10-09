@@ -3,6 +3,7 @@ package objectdb
 import (
 	"github.com/cdvelop/input"
 	"github.com/cdvelop/model"
+	"github.com/cdvelop/unixid"
 )
 
 //NOTA: nombre de tablas
@@ -28,7 +29,7 @@ var (
 			Name:  defaulTableName,
 			Table: defaulTableName,
 			Fields: []model.Field{
-				{Name: "id_" + defaulTableName, Input: input.Number()},
+				{Name: "id_" + defaulTableName, Input: unixid.InputPK()},
 				{Name: "nombre", Unique: true, Input: input.TextOnly()},
 				{Name: "apellido", Input: input.Text(), SkipCompletionAllowed: true},
 				{Name: "genero", Input: input.Radio(genero{})},

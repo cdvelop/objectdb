@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"sync"
 
-	"github.com/cdvelop/dbtools"
+	"github.com/cdvelop/timeserver"
+	"github.com/cdvelop/unixid"
 )
 
 func (c *Connection) Open() *sql.DB {
@@ -16,14 +18,19 @@ func (c *Connection) Open() *sql.DB {
 // obtener conexión
 func Get(dba databaseAdapter) *Connection {
 
+	uid, err := unixid.NewHandler(timeserver.TimeServer{}, &sync.Mutex{}, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	c := Connection{
-		UnixID:          dbtools.NewUnixIdHandler(),
+		UnixID:          uid,
 		databaseAdapter: dba,
 	}
 
 	c.Set(dba)
 
-	err := c.Ping()
+	err = c.Ping()
 	if err != nil {
 		log.Fatalf("¡Error ping: %v!", err)
 	}

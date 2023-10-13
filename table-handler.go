@@ -10,6 +10,11 @@ import (
 func (c *Connection) CreateTablesInDB(tables []*model.Object, action model.Subsequently) error {
 
 	for _, t := range tables {
+
+		if t.Table == "" {
+			return model.Error("error nombre de tabla no definido en objeto:", t.Name)
+		}
+
 		if exist, err := c.TableExist(t.Table); !exist {
 
 			if err != nil {

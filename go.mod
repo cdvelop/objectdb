@@ -11,7 +11,7 @@ require github.com/cdvelop/timetools v0.0.4 // indirect
 
 require (
 	github.com/cdvelop/dbtools v0.0.41
-	github.com/cdvelop/gotools v0.0.42
+	github.com/cdvelop/gotools v0.0.43
 	github.com/cdvelop/timeserver v0.0.1
 	github.com/cdvelop/unixid v0.0.2
 	golang.org/x/text v0.13.0 // indirect

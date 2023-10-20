@@ -16,7 +16,7 @@ func (c *Connection) CreateTablesInDB(tables []*model.Object, action model.Subse
 		}
 
 		if exist, err := c.TableExist(t.Table); !exist {
-
+			// fmt.Println("TABLA ", t.Table, " ¡NO EXISTE! ", c.DataBasEngine())
 			if err != nil {
 				return err
 			}
@@ -25,6 +25,8 @@ func (c *Connection) CreateTablesInDB(tables []*model.Object, action model.Subse
 			if err != nil {
 				return fmt.Errorf("no se logro crear tabla: %v\n%v", t.Table, err)
 			}
+		} else {
+			// fmt.Println("TABLA ", t.Table, " ¡YA EXISTE!", c.DataBasEngine())
 		}
 	}
 
@@ -39,8 +41,24 @@ func (c *Connection) TableExist(table_name string) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-
 	defer rows.Close()
 
-	return rows.Next(), nil
+	data, err := dbtools.FetchOne(rows)
+	if err != nil {
+		return false, err
+	}
+
+	for _, v := range data {
+		if v == "true" {
+			return true, nil
+		}
+
+		if v == table_name {
+			return true, nil
+		}
+	}
+
+	// fmt.Println(c.SQLTableExist(), "RESULTADO CONSULTA:", data)
+
+	return false, nil
 }

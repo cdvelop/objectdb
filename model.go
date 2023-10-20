@@ -25,3 +25,7 @@ type dbEngineAdapter interface {
 	DataBaseName() string     // nombre de la base de datos a conectar ej: "mydb"
 	ConnectionString() string //cadena con formato de conexión base de datos dns
 }
+
+func (Connection) RunOnClientDB() bool { //false base de datos corre en el servidor
+	return false
+}

@@ -16,12 +16,6 @@ import (
 
 const defaulTableName = "usuario"
 
-type genero struct{}
-
-func (genero) SourceData() map[string]string {
-	return map[string]string{"D": "Dama", "V": "Varón"}
-}
-
 var (
 	modelObjectForTest = map[string]*model.Object{
 
@@ -32,7 +26,7 @@ var (
 				{Name: "id_" + defaulTableName, Input: unixid.InputPK()},
 				{Name: "nombre", Unique: true, Input: input.TextOnly()},
 				{Name: "apellido", Input: input.Text(), SkipCompletionAllowed: true},
-				{Name: "genero", Input: input.Radio(genero{})},
+				{Name: "genero", Input: input.RadioGender()},
 			},
 		},
 

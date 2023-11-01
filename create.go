@@ -6,7 +6,7 @@ import (
 )
 
 // CreateObjectsInDB
-func (c Connection) CreateObjectsInDB(table_name string, all_data ...map[string]string) error {
+func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) error {
 	c.Open()
 	defer c.Close()
 

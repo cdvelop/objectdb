@@ -4,7 +4,7 @@ go 1.20
 
 require (
 	github.com/cdvelop/input v0.0.34
-	github.com/cdvelop/model v0.0.62
+	github.com/cdvelop/model v0.0.63
 )
 
 require github.com/cdvelop/timetools v0.0.4 // indirect

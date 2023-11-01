@@ -24,7 +24,7 @@ func (c Connection) createTest(t *testing.T) {
 				return
 			} else {
 
-				err = c.CreateObjectsInDB(data.Object, data.Data)
+				err = c.CreateObjectsInDB(data.Object, false, data.Data)
 				if err != nil {
 					if err.Error() != data.ExpectedError {
 						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)

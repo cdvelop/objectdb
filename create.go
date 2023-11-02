@@ -3,16 +3,30 @@ package objectdb
 import (
 	"fmt"
 	"strings"
+
+	"github.com/cdvelop/model"
 )
 
-// CreateObjectsInDB
-func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) error {
+// support: []map[string]string or map[string]string
+func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, items any) error {
+	var all_data []map[string]string
+
+	if data, ok := items.(map[string]string); ok {
+		all_data = append(all_data, data)
+	} else if data, ok := items.([]map[string]string); ok {
+		all_data = data
+	}
+
+	if len(all_data) == 0 {
+		return model.Error("error data ingresada para crear en tabla:", table_name, " incompatible, support only: []map[string]string or map[string]string")
+	}
+
 	c.Open()
 	defer c.Close()
 
 	tx, err := c.Begin()
 	if err != nil {
-		return filterMessageDBtoClient(err, table_name, all_data...)
+		return filterMessageDBtoClient(err, table_name, items)
 	}
 
 	for i, data := range all_data {
@@ -21,12 +35,12 @@ func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, a
 			var values []interface{}
 
 			var id string
-			if ido, ok := data["id_"+table_name]; ok {
+			if ido, ok := data[model.PREFIX_ID_NAME+table_name]; ok {
 				id = ido //id objeto
 			} else {
 				//agregar id al objeto si este no existe
 				id = c.GetNewID() //id nuevo
-				data["id_"+table_name] = id
+				data[model.PREFIX_ID_NAME+table_name] = id
 			}
 
 			var index uint8

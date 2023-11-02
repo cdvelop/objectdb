@@ -5,17 +5,19 @@ import (
 	"strings"
 )
 
-func filterMessageDBtoClient(err error, table_name string, all_data ...map[string]string) error {
+func filterMessageDBtoClient(err error, table_name string, items ...any) error {
 
 	if strings.Contains(err.Error(), `delete`) && strings.Contains(err.Error(), "viola la llave") {
 		return fmt.Errorf("error No se puede eliminar. Datos comprometidos en otra tabla")
 	}
 
 	if strings.Contains(err.Error(), `llave duplicada`) {
-		for _, data := range all_data {
-			fieldError, valueError := findFieldWithError(err.Error(), data)
-			if fieldError != "" && valueError != "" {
-				return fmt.Errorf("error en el campo %v valor %v no se puede repetir", fieldError, valueError)
+		if len(items) >= 1 {
+			if data, ok := items[0].(map[string]string); ok {
+				fieldError, valueError := findFieldWithError(err.Error(), data)
+				if fieldError != "" && valueError != "" {
+					return fmt.Errorf("error en el campo %v valor %v no se puede repetir", fieldError, valueError)
+				}
 			}
 		}
 	}

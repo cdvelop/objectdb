@@ -8,8 +8,11 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (c Connection) ReadDataAsyncInDB(from_tables string, params []map[string]string, callback func([]map[string]string, error)) {
-	callback(nil, model.Error("error ReadDataAsyncInDB no implementado en paquete objectdb"))
+func (c Connection) ReadStringDataAsyncInDB(p model.ReadDBParams, callback func([]map[string]string, error)) {
+	callback(nil, model.Error("error ReadStringDataAsyncInDB no implementado en paquete objectdb"))
+}
+func (c Connection) ReadAnyDataAsyncInDB(p model.ReadDBParams, callback func([]map[string]interface{}, error)) {
+	callback(nil, model.Error("error ReadAnyDataAsyncInDB no implementado en paquete objectdb"))
 }
 
 // from_tables ej: "users,products" or: public.reservation, public.patient"

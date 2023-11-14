@@ -1,36 +1,37 @@
 package objectdb
 
 import (
-	"fmt"
-
 	"github.com/cdvelop/dbtools"
 	"github.com/cdvelop/model"
 )
 
-func (c *Connection) CreateTablesInDB(tables []*model.Object, action model.Subsequently) error {
+func (c *Connection) CreateTablesInDB(tables []*model.Object, result func(error)) {
 
 	for _, t := range tables {
 
 		if t.Table == "" {
-			return model.Error("error nombre de tabla no definido en objeto:", t.Name)
+			result(model.Error("error nombre de tabla no definido en objeto:", t.Name))
+			return
 		}
 
 		if exist, err := c.TableExist(t.Table); !exist {
 			// fmt.Println("TABLA ", t.Table, " ¡NO EXISTE! ", c.DataBasEngine())
 			if err != nil {
-				return err
+				result(err)
+				return
 			}
 
 			err := dbtools.CreateOneTABLE(c, t)
 			if err != nil {
-				return fmt.Errorf("no se logro crear tabla: %v\n%v", t.Table, err)
+				result(model.Error("no se logro crear tabla:", t.Table, err))
+				return
 			}
 		} else {
 			// fmt.Println("TABLA ", t.Table, " ¡YA EXISTE!", c.DataBasEngine())
 		}
 	}
 
-	return nil
+	result(nil)
 }
 
 func (c *Connection) TableExist(table_name string) (bool, error) {

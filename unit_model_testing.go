@@ -20,8 +20,8 @@ var (
 	modelObjectForTest = map[string]*model.Object{
 
 		defaulTableName: {
-			Name:  defaulTableName,
-			Table: defaulTableName,
+			ObjectName: defaulTableName,
+			Table:      defaulTableName,
 			Fields: []model.Field{
 				{Name: "id_" + defaulTableName, Input: unixid.InputPK()},
 				{Name: "nombre", Unique: true, Input: input.TextOnly()},
@@ -31,8 +31,8 @@ var (
 		},
 
 		"especialidad": {
-			Name:  "especialidad",
-			Table: "especialidad",
+			ObjectName: "especialidad",
+			Table:      "especialidad",
 			Fields: []model.Field{
 				{Name: "id_especialidad"},
 				{Name: "nombre_especialidad", Unique: true},
@@ -42,8 +42,8 @@ var (
 		},
 
 		"credentials": {
-			Name:  "credentials",
-			Table: "credentials",
+			ObjectName: "credentials",
+			Table:      "credentials",
 			Fields: []model.Field{
 				{Name: "id_" + "credentials"},
 				{Name: "id_" + defaulTableName},

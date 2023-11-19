@@ -10,7 +10,7 @@ func (c *Connection) CreateTablesInDB(tables []*model.Object, result func(error)
 	for _, t := range tables {
 
 		if t.Table == "" {
-			result(model.Error("error nombre de tabla no definido en objeto:", t.Name))
+			result(model.Error("error nombre de tabla no definido en objeto:", t.ObjectName))
 			return
 		}
 

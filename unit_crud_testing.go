@@ -13,7 +13,7 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 
 	// eliminar tablas y data anterior
 	for _, t := range tables {
-		dbtools.DeleteTABLE(c, t.Name)
+		dbtools.DeleteTABLE(c, t.ObjectName)
 	}
 
 	// crear tablas nuevas

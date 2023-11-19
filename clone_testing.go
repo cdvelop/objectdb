@@ -16,7 +16,7 @@ func (c *Connection) cloneTest(tables []*model.Object, t *testing.T) {
 		for _, table := range tables {
 			err := dbtools.ClonDATABLE(c, table)
 			if err != nil {
-				log.Fatalln("error al clonar tabla "+table.Name+" ", err)
+				log.Fatalln("error al clonar tabla "+table.ObjectName+" ", err)
 			}
 		}
 

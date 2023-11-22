@@ -4,12 +4,12 @@ go 1.20
 
 require (
 	github.com/cdvelop/input v0.0.34
-	github.com/cdvelop/model v0.0.69
+	github.com/cdvelop/model v0.0.70
 )
 
 require (
 	github.com/cdvelop/strings v0.0.7 // indirect
-	github.com/cdvelop/timetools v0.0.4 // indirect
+	github.com/cdvelop/timetools v0.0.19 // indirect
 )
 
 require (

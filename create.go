@@ -8,7 +8,8 @@ import (
 )
 
 // support: []map[string]string or map[string]string
-func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, items any) error {
+func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, items any) (err string) {
+	const this = "CreateObjectsInDB error "
 	var all_data []map[string]string
 
 	if data, ok := items.(map[string]string); ok {
@@ -18,15 +19,15 @@ func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, i
 	}
 
 	if len(all_data) == 0 {
-		return model.Error("error data ingresada para crear en tabla:", table_name, " incompatible, support only: []map[string]string or map[string]string")
+		return this + "data ingresada para crear en tabla:" + table_name + " incompatible, support only: []map[string]string or map[string]string"
 	}
 
 	c.Open()
 	defer c.Close()
 
-	tx, err := c.Begin()
-	if err != nil {
-		return filterMessageDBtoClient(err, table_name, items)
+	tx, e := c.Begin()
+	if e != nil {
+		return this + filterMessageDBtoClient(e.Error(), table_name, items)
 	}
 
 	for i, data := range all_data {
@@ -53,17 +54,17 @@ func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, i
 
 			query := fmt.Sprintf("INSERT INTO %s (%s) VALUES (%s)", table_name, strings.Join(columns, ","), strings.Join(placeholders, ","))
 
-			stmt, err := tx.Prepare(query)
-			if err != nil {
+			stmt, e := tx.Prepare(query)
+			if e != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return this + filterMessageDBtoClient(e.Error(), table_name, data)
 			}
 			defer stmt.Close()
 
-			_, err = stmt.Exec(values...)
-			if err != nil {
+			_, e = stmt.Exec(values...)
+			if e != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return this + filterMessageDBtoClient(e.Error(), table_name, data)
 			}
 
 			// si esta todo ok agregamos el id la data original
@@ -71,10 +72,10 @@ func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, i
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
+	if e := tx.Commit(); e != nil {
 		tx.Rollback()
-		return filterMessageDBtoClient(err, table_name)
+		return this + filterMessageDBtoClient(e.Error(), table_name)
 	}
 
-	return nil
+	return ""
 }

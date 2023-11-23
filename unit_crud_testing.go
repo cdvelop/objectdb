@@ -1,7 +1,6 @@
 package objectdb
 
 import (
-	"log"
 	"testing"
 
 	"github.com/cdvelop/dbtools"
@@ -18,8 +17,9 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 
 	// crear tablas nuevas
 	err := dbtools.CreateTablesInDB(c, tables...)
-	if err != nil {
-		log.Fatalln(err)
+	if err != "" {
+		t.Fatal(err)
+		return
 	}
 
 	c.addataCrud()

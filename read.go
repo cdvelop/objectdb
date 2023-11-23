@@ -8,11 +8,11 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (c Connection) ReadStringDataAsyncInDB(p model.ReadDBParams, callback func([]map[string]string, error)) {
-	callback(nil, model.Error("error ReadStringDataAsyncInDB no implementado en paquete objectdb"))
+func (c Connection) ReadStringDataAsyncInDB(p model.ReadDBParams, callback func(result []map[string]string, err string)) {
+	callback(nil, "error ReadStringDataAsyncInDB no implementado en paquete objectdb")
 }
-func (c Connection) ReadAnyDataAsyncInDB(p model.ReadDBParams, callback func([]map[string]interface{}, error)) {
-	callback(nil, model.Error("error ReadAnyDataAsyncInDB no implementado en paquete objectdb"))
+func (c Connection) ReadAnyDataAsyncInDB(p model.ReadDBParams, callback func(result []map[string]interface{}, err string)) {
+	callback(nil, "error ReadAnyDataAsyncInDB no implementado en paquete objectdb")
 }
 
 // from_tables ej: "users,products" or: public.reservation, public.patient"
@@ -24,7 +24,8 @@ func (c Connection) ReadAnyDataAsyncInDB(p model.ReadDBParams, callback func([]m
 // ARGS: "1,4,33"
 // }
 
-func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]string) ([]map[string]string, error) {
+func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]string) (out []map[string]string, err string) {
+	const this = "ReadObjectsInDB error "
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (
 		// read_all           = true
@@ -58,9 +59,9 @@ func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]strin
 				args = append(args, value)
 
 			case key == "LIMIT": // Verificar si se proporciona un límite para la consulta
-				limit, err := strconv.Atoi(value)
-				if err != nil {
-					return nil, err
+				limit, e := strconv.Atoi(value)
+				if e != nil {
+					return nil, this + e.Error()
 				}
 				place_holder_index++
 				limit_clause = " LIMIT " + c.PlaceHolders(place_holder_index) // según db
@@ -104,15 +105,15 @@ func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]strin
 	var rowsMap []map[string]string
 
 	rowMap, err := c.QueryOne(sql, args...)
-	if err != nil {
-		return nil, err
+	if err != "" {
+		return nil, this + err
 	}
 
 	if rowMap != nil {
 		rowsMap = append(rowsMap, rowMap)
 	}
 
-	return rowsMap, nil
+	return rowsMap, ""
 }
 
 // SelectValue retorna valor de una consulta sql

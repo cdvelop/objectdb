@@ -1,7 +1,6 @@
 package objectdb
 
 import (
-	"log"
 	"strings"
 	"testing"
 )
@@ -24,21 +23,24 @@ func (c Connection) updateTest(t *testing.T) {
 
 				object, exist := modelObjectForTest[data.Object]
 				if !exist {
-					log.Fatalf("objeto: %v no existe", data.Object)
+					t.Fatalf("objeto: %v no existe", data.Object)
+					return
 				}
 
 				// fmt.Println("DATA A ACTUALIZAR: ", data.Data)
 
 				// validar elemento aquí
 				err := object.ValidateData(false, true, data.Data)
-				if err != nil {
-					log.Fatalln(err)
+				if err != "" {
+					t.Fatal(err)
+					return
 				}
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
 				err = c.UpdateObjectsInDB(defaulTableName, data.Data)
-				if err != nil {
-					if err.Error() != data.ExpectedError {
-						log.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
+				if err != "" {
+					if err != data.ExpectedError {
+						t.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)
+						return
 					}
 				}
 
@@ -55,18 +57,21 @@ func (c Connection) updateTest(t *testing.T) {
 
 			t.Run(("UPDATE READ CHECK: "), func(t *testing.T) {
 				out, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
-				if err != nil {
-					log.Fatalln("error en test de lectura ", err, data)
+				if err != "" {
+					t.Fatal("error en test de lectura ", err, data)
+					return
 				}
 
 				if len(out) == 0 {
-					log.Fatalf("!!! READ data: [%v] resp\n", out)
+					t.Fatalf("!!! READ data: [%v] resp\n", out)
+					return
 				}
 
 				// fmt.Println("=> DATA CAMBIADA?:", out)
 				for _, o := range out {
 					if !strings.Contains(o["apellido"], "NUEVO APELLIDO") {
-						log.Fatalln("ERROR APELLIDO NUEVO NO CAMBIADO SALIDA:\n", out)
+						t.Fatal("ERROR APELLIDO NUEVO NO CAMBIADO SALIDA:\n", out)
+						return
 					}
 				}
 			})

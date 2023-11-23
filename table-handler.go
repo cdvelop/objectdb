@@ -5,61 +5,60 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (c *Connection) CreateTablesInDB(tables []*model.Object, result func(error)) {
-
+func (c *Connection) CreateTablesInDB(tables []*model.Object, result func(err string)) {
+	const this = "CreateTablesInDB error "
 	for _, t := range tables {
 
 		if t.Table == "" {
-			result(model.Error("error nombre de tabla no definido en objeto:", t.ObjectName))
+			result(this + "error nombre de tabla no definido en objeto: " + t.ObjectName)
 			return
 		}
 
 		if exist, err := c.TableExist(t.Table); !exist {
 			// fmt.Println("TABLA ", t.Table, " ¡NO EXISTE! ", c.DataBasEngine())
-			if err != nil {
-				result(err)
+			if err != "" {
+				result(this + err)
 				return
 			}
 
 			err := dbtools.CreateOneTABLE(c, t)
-			if err != nil {
-				result(model.Error("no se logro crear tabla:", t.Table, err))
+			if err != "" {
+				result(this + "no se logro crear tabla: " + t.Table + " " + err)
 				return
 			}
-		} else {
-			// fmt.Println("TABLA ", t.Table, " ¡YA EXISTE!", c.DataBasEngine())
 		}
 	}
 
-	result(nil)
+	result("")
 }
 
-func (c *Connection) TableExist(table_name string) (bool, error) {
+func (c *Connection) TableExist(table_name string) (exist bool, err string) {
+	const this = "TableExist error "
 	c.Open()
 	defer c.Close()
 
-	rows, err := c.Query(c.SQLTableExist(), table_name)
-	if err != nil {
-		return false, err
+	rows, e := c.Query(c.SQLTableExist(), table_name)
+	if e != nil {
+		return false, e.Error()
 	}
 	defer rows.Close()
 
 	data, err := dbtools.FetchOne(rows)
-	if err != nil {
-		return false, err
+	if err != "" {
+		return false, this + err
 	}
 
 	for _, v := range data {
 		if v == "true" {
-			return true, nil
+			return true, ""
 		}
 
 		if v == table_name {
-			return true, nil
+			return true, ""
 		}
 	}
 
 	// fmt.Println(c.SQLTableExist(), "RESULTADO CONSULTA:", data)
 
-	return false, nil
+	return false, ""
 }

@@ -19,7 +19,7 @@ func (c *Connection) Open() *sql.DB {
 func Get(dba databaseAdapter) *Connection {
 
 	uid, err := unixid.NewHandler(timeserver.TimeServer{}, &sync.Mutex{}, nil)
-	if err != nil {
+	if err != "" {
 		log.Fatal(err)
 	}
 
@@ -30,9 +30,9 @@ func Get(dba databaseAdapter) *Connection {
 
 	c.Set(dba)
 
-	err = c.Ping()
-	if err != nil {
-		log.Fatalf("¡Error ping: %v!", err)
+	e := c.Ping()
+	if e != nil {
+		log.Fatalf("¡Error ping: %v!", e)
 	}
 
 	fmt.Printf("*** Conexión DB: %v Establecida, Engine: %v ***\n", dba.DataBaseName(), c.DataBasEngine())

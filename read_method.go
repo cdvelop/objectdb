@@ -27,26 +27,26 @@ func (c Connection) QueryWithoutANSWER(sql, mje string) bool {
 
 // QueryOne .
 // https://my.oschina.net/nowayout/blog/139398
-func (c Connection) QueryOne(sql string, args ...interface{}) (map[string]string, error) {
+func (c Connection) QueryOne(sql string, args ...interface{}) (out map[string]string, err string) {
 	c.Open()
 	defer c.Close()
 
-	rows, err := c.Query(sql, args...)
-	if err != nil {
-		return nil, err
+	rows, e := c.Query(sql, args...)
+	if e != nil {
+		return nil, "QueryOne error " + e.Error()
 	}
 
 	return dbtools.FetchOne(rows)
 }
 
 // QueryAll .
-func (c Connection) QueryAll(sql string, args ...interface{}) ([]map[string]string, error) {
+func (c Connection) QueryAll(sql string, args ...interface{}) (out []map[string]string, err string) {
 	c.Open()
 	defer c.Close()
 
-	rows, err := c.Query(sql, args...)
-	if err != nil {
-		return nil, err
+	rows, e := c.Query(sql, args...)
+	if e != nil {
+		return nil, "QueryAll error " + e.Error()
 	}
 
 	return dbtools.FetchAll(rows)

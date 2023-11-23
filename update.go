@@ -7,13 +7,14 @@ import (
 )
 
 // UpdateObjectsInDB
-func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]string) error {
+func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]string) (err string) {
+	const this = "UpdateObjectsInDB error "
 	c.Open()
 	defer c.Close()
 
-	tx, err := c.DB.Begin()
-	if err != nil {
-		return filterMessageDBtoClient(err, table_name)
+	tx, e := c.DB.Begin()
+	if e != nil {
+		return this + filterMessageDBtoClient(e.Error(), table_name)
 	}
 
 	for _, data := range all_data {
@@ -43,25 +44,25 @@ func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]
 
 			values = append(values, id_value)
 
-			stmt, err := tx.Prepare(query)
-			if err != nil {
+			stmt, e := tx.Prepare(query)
+			if e != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return this + filterMessageDBtoClient(e.Error(), table_name, data)
 			}
 			defer stmt.Close()
 
-			_, err = stmt.Exec(values...)
-			if err != nil {
+			_, e = stmt.Exec(values...)
+			if e != nil {
 				tx.Rollback()
-				return filterMessageDBtoClient(err, table_name, data)
+				return this + filterMessageDBtoClient(e.Error(), table_name, data)
 			}
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
+	if e := tx.Commit(); e != nil {
 		tx.Rollback()
-		return filterMessageDBtoClient(err, table_name)
+		return this + filterMessageDBtoClient(e.Error(), table_name)
 	}
 
-	return nil
+	return ""
 }

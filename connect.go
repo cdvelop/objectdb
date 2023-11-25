@@ -18,7 +18,7 @@ func (c *Connection) Open() *sql.DB {
 // obtener conexión
 func Get(dba databaseAdapter) *Connection {
 
-	uid, err := unixid.NewHandler(timeserver.TimeServer{}, &sync.Mutex{}, nil)
+	uid, err := unixid.NewHandler(timeserver.Add(), &sync.Mutex{}, nil)
 	if err != "" {
 		log.Fatal(err)
 	}

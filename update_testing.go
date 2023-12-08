@@ -56,7 +56,7 @@ func (c Connection) updateTest(t *testing.T) {
 		if data.ExpectedError == "" { //solo los casos de éxito
 
 			t.Run(("UPDATE READ CHECK: "), func(t *testing.T) {
-				out, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
+				out, err := c.ReadSyncDataDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
 				if err != "" {
 					t.Fatal("error en test de lectura ", err, data)
 					return

@@ -8,11 +8,9 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (c Connection) ReadStringDataAsyncInDB(p model.ReadDBParams, callback func(result []map[string]string, err string)) {
-	callback(nil, "error ReadStringDataAsyncInDB no implementado en paquete objectdb")
-}
-func (c Connection) ReadAnyDataAsyncInDB(p model.ReadDBParams, callback func(result []map[string]interface{}, err string)) {
-	callback(nil, "error ReadAnyDataAsyncInDB no implementado en paquete objectdb")
+func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResult)) {
+
+	callback(model.ReadResult{Error: "error ReadAsyncDataDB no implementado en paquete objectdb"})
 }
 
 // from_tables ej: "users,products" or: public.reservation, public.patient"
@@ -24,8 +22,8 @@ func (c Connection) ReadAnyDataAsyncInDB(p model.ReadDBParams, callback func(res
 // ARGS: "1,4,33"
 // }
 
-func (c Connection) ReadObjectsInDB(from_tables string, data ...map[string]string) (out []map[string]string, err string) {
-	const this = "ReadObjectsInDB error "
+func (c Connection) ReadSyncDataDB(from_tables string, data ...map[string]string) (out []map[string]string, err string) {
+	const this = "ReadSyncDataDB error "
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (
 		// read_all           = true

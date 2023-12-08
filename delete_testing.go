@@ -33,7 +33,7 @@ func (c Connection) deleteTest(t *testing.T) {
 
 				} else {
 
-					element_exists, err := c.ReadObjectsInDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
+					element_exists, err := c.ReadSyncDataDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
 					if err != "" {
 						t.Fatal("error en test de lectura ", err, data)
 						return

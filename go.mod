@@ -4,9 +4,9 @@ go 1.20
 
 require (
 	github.com/cdvelop/dbtools v0.0.69
-	github.com/cdvelop/input v0.0.63
+	github.com/cdvelop/input v0.0.64
 	github.com/cdvelop/maps v0.0.8
-	github.com/cdvelop/model v0.0.86
+	github.com/cdvelop/model v0.0.89
 	github.com/cdvelop/timeserver v0.0.28
 	github.com/cdvelop/unixid v0.0.29
 )

@@ -10,7 +10,7 @@ github.com/cdvelop/strings v0.0.9 h1:yDh2msl3EQja0dHw+oOHfD9ymQMa50KakKTkjsXDnvw
 github.com/cdvelop/strings v0.0.9/go.mod h1:zNexDeXHRETbMmlmNThQeM7ksRsvzrphsCfwuSxaURk=
 github.com/cdvelop/timeserver v0.0.29 h1:2yfoQfHgjDP6UzXSfdVcSgYyfT2Li1X/Y69sqG4LM0w=
 github.com/cdvelop/timeserver v0.0.29/go.mod h1:CyPkc3KhjEkBiZOvDAs2kXriafxq8XhSvQW1rt1jeJA=
-github.com/cdvelop/timetools v0.0.29 h1:UNX2B2b5nLFIKhqceB/kkQ11ixVJCd3El92ZmyF9Yf0=
-github.com/cdvelop/timetools v0.0.29/go.mod h1:DrlKn5sZzSA+57VlDpW3/xriINWfPt+zCMYBejsxars=
+github.com/cdvelop/timetools v0.0.30 h1:zcxfgFWdGXTQ85ZFKx0gGc8jVWCvu29xvHH1Lp8Dee4=
+github.com/cdvelop/timetools v0.0.30/go.mod h1:FLXt6dvkY4x3rjgRYX7J5XK2H6aHIdxV+fBA+Apj7J8=
 github.com/cdvelop/unixid v0.0.30 h1:wDXtieV+PVfbMSqkY2WRZCpC0NCcKJRKMnLzO0q4DDE=
 github.com/cdvelop/unixid v0.0.30/go.mod h1:ztmQ7p/RNlUSdgXXhD+Wl03x3YvCuw0t6Vqua4e5+Y0=

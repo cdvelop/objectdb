@@ -40,7 +40,10 @@ func (c Connection) CreateObjectsInDB(table_name string, backup_required bool, i
 				id = ido //id objeto
 			} else {
 				//agregar id al objeto si este no existe
-				id = c.GetNewID() //id nuevo
+				id, err = c.GetNewID() //id nuevo
+				if err != "" {
+					return this + err
+				}
 				data[model.PREFIX_ID_NAME+table_name] = id
 			}
 

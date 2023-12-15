@@ -2,15 +2,14 @@ package objectdb
 
 import (
 	"fmt"
-	"strconv"
 	"strings"
 
 	"github.com/cdvelop/model"
 )
 
-func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResult)) {
+func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResults, err string)) {
 
-	callback(model.ReadResult{Error: "error ReadAsyncDataDB no implementado en paquete objectdb"})
+	callback(model.ReadResults{}, "ReadAsyncDataDB no implementado en paquete objectdb")
 }
 
 // from_tables ej: "users,products" or: public.reservation, public.patient"
@@ -22,8 +21,8 @@ func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r model.Re
 // ARGS: "1,4,33"
 // }
 
-func (c Connection) ReadSyncDataDB(from_tables string, data ...map[string]string) (out []map[string]string, err string) {
-	const this = "ReadSyncDataDB error "
+func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string) (rowsMap []map[string]string, err string) {
+	const this = "ReadSyncDataDB "
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (
 		// read_all           = true
@@ -33,74 +32,80 @@ func (c Connection) ReadSyncDataDB(from_tables string, data ...map[string]string
 		args               []interface{}
 		place_holder_index uint8
 		choose             = "*"
-		total_ids_found    int64
+		wheres_found       []map[string]string
 	)
 
-	for i, params := range data {
+	if p.WHERE != nil && len(p.WHERE) != 0 {
+		wheres_found = append(wheres_found, p.WHERE)
+	}
 
+	// búsqueda por multiples ids
+	field_id := model.PREFIX_ID_NAME + p.FROM_TABLE
+	for _, params := range data {
 		for key, value := range params {
-
-			switch {
-
-			case key == "id_"+from_tables:
-				total_ids_found++
-				place_holder_index++
-
-				if i == 0 {
-
-					where_conditions = " WHERE " + key + " = " + c.PlaceHolders(place_holder_index)
-				} else {
-
-					where_conditions += " OR " + key + " = " + c.PlaceHolders(place_holder_index)
-				}
-
-				args = append(args, value)
-
-			case key == "LIMIT": // Verificar si se proporciona un límite para la consulta
-				limit, e := strconv.Atoi(value)
-				if e != nil {
-					return nil, this + e.Error()
-				}
-				place_holder_index++
-				limit_clause = " LIMIT " + c.PlaceHolders(place_holder_index) // según db
-				args = append(args, limit)
-
-			case key == "ORDER_BY": // Verificar si se proporcionan nombres para ordenar
-				var comma string
-				order_by += ` ORDER BY `
-				names_to_order := strings.Split(value, ",")
-				for _, field_name := range names_to_order {
-
-					order_by += comma + field_name
-					comma = `,`
-				}
-
-			case key == "SELECT": //campos específicos a seleccionar
-				choose = value
-
-			case key == "WHERE": //se envió una consulta con where
-				where_conditions = " WHERE " + value
-
-			case key == "ARGS": //se envió una consulta con where
-				new_args := strings.Split(value, ",")
-				args = append(args, new_args)
-
+			if key == field_id {
+				wheres_found = append(wheres_found, map[string]string{field_id: value})
 			}
 		}
 	}
 
+	if p.ID != "" { // búsqueda por un único id
+		wheres_found = append(wheres_found, map[string]string{field_id: p.ID})
+	}
+
+	if p.SELECT != "" { //campos específicos a seleccionar
+		choose = p.SELECT
+	}
+
+	if len(wheres_found) != 0 {
+		var condition = " WHERE "
+
+		for _, where := range wheres_found {
+
+			place_holder_index++
+
+			for key, value := range where {
+
+				where_conditions += condition + key + " = " + c.PlaceHolders(place_holder_index)
+
+				args = append(args, value)
+			}
+
+			if p.AND_CONDITION {
+				condition = " AND "
+			} else {
+				condition = " OR "
+			}
+		}
+	}
+
+	if p.LIMIT != 0 { // Verificar si se proporciona un límite para la consulta
+		place_holder_index++
+		limit_clause = " LIMIT " + c.PlaceHolders(place_holder_index) // según db
+		args = append(args, p.LIMIT)
+
+	}
+
+	if p.ORDER_BY != "" { // Verificar si se proporcionan nombres para ordenar
+		var comma string
+		order_by += ` ORDER BY `
+		names_to_order := strings.Split(p.ORDER_BY, ",")
+		for _, field_name := range names_to_order {
+
+			order_by += comma + field_name
+			comma = `,`
+		}
+	}
+
 	// Construir la consulta SQL
-	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, from_tables, where_conditions, order_by, limit_clause)
+	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, p.FROM_TABLE, where_conditions, order_by, limit_clause)
 
 	// fmt.Println("SQL READ: ", sql)
 	// fmt.Println("ARGUMENTOS ", args)
 
-	if total_ids_found != 1 {
+	if len(wheres_found) != 1 {
 		return c.QueryAll(sql, args...)
 	}
-
-	// Ejecutar la consulta y obtener los resultados
-	var rowsMap []map[string]string
 
 	rowMap, err := c.QueryOne(sql, args...)
 	if err != "" {

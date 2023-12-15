@@ -2,6 +2,8 @@ package objectdb
 
 import (
 	"testing"
+
+	"github.com/cdvelop/model"
 )
 
 func (c Connection) deleteTest(t *testing.T) {
@@ -33,7 +35,7 @@ func (c Connection) deleteTest(t *testing.T) {
 
 				} else {
 
-					element_exists, err := c.ReadSyncDataDB(defaulTableName, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
+					element_exists, err := c.ReadSyncDataDB(model.ReadParams{FROM_TABLE: defaulTableName}, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
 					if err != "" {
 						t.Fatal("error en test de lectura ", err, data)
 						return

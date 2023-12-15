@@ -7,9 +7,9 @@ import (
 	"github.com/cdvelop/model"
 )
 
-func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r model.ReadResults, err string)) {
+func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.ReadResults, err string)) {
 
-	callback(model.ReadResults{}, "ReadAsyncDataDB no implementado en paquete objectdb")
+	callback(nil, "ReadAsyncDataDB no implementado en paquete objectdb")
 }
 
 // from_tables ej: "users,products" or: public.reservation, public.patient"

@@ -2,24 +2,14 @@ package objectdb
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/cdvelop/model"
+	"github.com/cdvelop/strings"
 )
 
 func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.ReadResults, err string)) {
-
 	callback(nil, "ReadAsyncDataDB no implementado en paquete objectdb")
 }
-
-// from_tables ej: "users,products" or: public.reservation, public.patient"
-// data ... map[string]string ej:{
-// LIMIT: 10, 5, 100. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
-// ORDER_BY: name,phone,address
-// SELECT: "name, phone, address" default *
-// WHERE: "patient.id_patient = reservation.id_patient AND reservation.id_staff = '2'"
-// ARGS: "1,4,33"
-// }
 
 func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string) (rowsMap []map[string]string, err string) {
 	const this = "ReadSyncDataDB "
@@ -33,10 +23,11 @@ func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string
 		place_holder_index uint8
 		choose             = "*"
 		wheres_found       []map[string]string
+		wheres_count       int64
 	)
 
 	if p.WHERE != nil && len(p.WHERE) != 0 {
-		wheres_found = append(wheres_found, p.WHERE)
+		wheres_found = append(wheres_found, p.WHERE...)
 	}
 
 	// búsqueda por multiples ids
@@ -62,20 +53,32 @@ func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string
 
 		for _, where := range wheres_found {
 
-			place_holder_index++
-
 			for key, value := range where {
+				wheres_count++
 
-				where_conditions += condition + key + " = " + c.PlaceHolders(place_holder_index)
+				var where_value string
 
-				args = append(args, value)
+				if valueIsFieldName(key, value) || valueContainClauseAND(value) { // chequear valor si es de tipo nombre de campo de otra una tabla o contiene and
+					// fmt.Println("KEY:", key, "VALUE:", value, " son de tipo nombre de campo")
+					where_value = value
+
+				} else {
+					place_holder_index++
+
+					where_value = c.PlaceHolders(place_holder_index)
+					args = append(args, value)
+				}
+
+				where_conditions += condition + key + " = " + where_value
+
+				if p.AND_CONDITION {
+					condition = " AND "
+				} else {
+					condition = " OR "
+				}
+
 			}
 
-			if p.AND_CONDITION {
-				condition = " AND "
-			} else {
-				condition = " OR "
-			}
 		}
 	}
 
@@ -100,10 +103,12 @@ func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string
 	// Construir la consulta SQL
 	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, p.FROM_TABLE, where_conditions, order_by, limit_clause)
 
-	// fmt.Println("SQL READ: ", sql)
+	// fmt.Println("- SQL READ: ", p.FROM_TABLE)
+	// fmt.Println(sql)
 	// fmt.Println("ARGUMENTOS ", args)
+	// fmt.Println()
 
-	if len(wheres_found) != 1 {
+	if wheres_count != 1 {
 		return c.QueryAll(sql, args...)
 	}
 

@@ -91,7 +91,7 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 		if len(data_stored) != total_creations {
 			fmt.Printf("Caso 4 error se esperaban: %v resultados pero se obtuvieron: %v\n", total_creations, len(data_stored))
 			fmt.Println("RESP: ", data_stored)
-			t.Fatal()
+			log.Fatal()
 			return
 		}
 

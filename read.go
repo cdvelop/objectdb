@@ -106,9 +106,10 @@ func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string
 	// fmt.Println("- SQL READ: ", p.FROM_TABLE)
 	// fmt.Println(sql)
 	// fmt.Println("ARGUMENTOS ", args)
+	// fmt.Println("wheres_count:", wheres_count)
 	// fmt.Println()
 
-	if wheres_count != 1 {
+	if wheres_count != 1 || (choose == "*" && wheres_count == 1) {
 		return c.QueryAll(sql, args...)
 	}
 

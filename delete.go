@@ -7,7 +7,7 @@ import (
 )
 
 // DeleteObjectsInDB borra objetos de la base de datos según nombre de la tabla y ids.
-func (c Connection) DeleteObjectsInDB(table_name string, all_data ...map[string]string) (err string) {
+func (c Connection) DeleteObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) (err string) {
 	const this = "DeleteObjectsInDB error "
 	c.Open()
 	defer c.Close()

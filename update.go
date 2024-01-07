@@ -7,7 +7,7 @@ import (
 )
 
 // UpdateObjectsInDB
-func (c Connection) UpdateObjectsInDB(table_name string, all_data ...map[string]string) (err string) {
+func (c Connection) UpdateObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) (err string) {
 	const this = "UpdateObjectsInDB error "
 	c.Open()
 	defer c.Close()

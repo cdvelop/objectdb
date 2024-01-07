@@ -38,7 +38,7 @@ func (c Connection) updateTest(t *testing.T) {
 					return
 				}
 				// fmt.Println("=> DATA A ACTUALIZAR: ", data.Data)
-				err = c.UpdateObjectsInDB(defaulTableName, data.Data)
+				err = c.UpdateObjectsInDB(defaulTableName, false, data.Data)
 				if err != "" {
 					if err != data.ExpectedError {
 						t.Fatalf("en objeto: [%v]\n=>la expectativa es: [%v]\n=>pero se obtuvo: [%v]\n%v", data.Object, data.ExpectedError, err, data.Object)

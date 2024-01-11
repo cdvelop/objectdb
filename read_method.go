@@ -1,28 +1,21 @@
 package objectdb
 
 import (
-	"fmt"
-	"log"
-
 	"github.com/cdvelop/dbtools"
 )
 
 // QueryWithoutANSWER SinResultado ejecuta sql en bd con sin respuesta de mas de 1 operación
 // recibe sql y mensaje a mostrar en consola
-func (c Connection) QueryWithoutANSWER(sql, mje string) bool {
+func (c Connection) QueryWithoutANSWER(sql string) (err string) {
 	c.Open()
 	defer c.Close()
 
-	_, err := c.Exec(sql)
-	if err != nil {
-		log.Printf("%v %v", err, sql)
-		return false
-	}
-	if mje != "" {
-		fmt.Println(mje)
+	_, er := c.Exec(sql)
+	if er != nil {
+		return "QueryWithoutANSWER " + er.Error()
 	}
 
-	return true
+	return
 }
 
 // QueryOne .

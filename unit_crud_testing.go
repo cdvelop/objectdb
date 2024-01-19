@@ -22,6 +22,11 @@ func (c *Connection) TestCrudStart(t *testing.T) {
 		return
 	}
 
+	// for _, table := range tables {
+	// 	ok, err := c.TableExist(table.Table)
+	// 	fmt.Println("TABLA", table.Table, "exist:", ok, " error?", err)
+	// }
+
 	c.addataCrud()
 
 	c.createTest(t)

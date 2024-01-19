@@ -103,16 +103,23 @@ func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string
 	// Construir la consulta SQL
 	sql := fmt.Sprintf("SELECT %s FROM %s%s%s%s;", choose, p.FROM_TABLE, where_conditions, order_by, limit_clause)
 
-	// fmt.Println("- SQL READ: ", p.FROM_TABLE)
-	// fmt.Println(sql)
-	// fmt.Println("ARGUMENTOS ", args)
+	// fmt.Print(`
+
+	// - SQL READ:  `+p.FROM_TABLE+`
+
+	//    `+sql+`
+
+	//    ARGUMENTOS:
+
+	// `, args)
 	// fmt.Println("wheres_count:", wheres_count)
-	// fmt.Println()
 
 	if wheres_count != 1 || (choose == "*" && wheres_count == 1) {
+		// fmt.Println("QUERY ALL")
 		return c.QueryAll(sql, args...)
 	}
 
+	// fmt.Println("QUERY ONE")
 	rowMap, err := c.QueryOne(sql, args...)
 	if err != "" {
 		return nil, this + err

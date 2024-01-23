@@ -7,11 +7,11 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (c Connection) ReadAsyncDataDB(p model.ReadParams, callback func(r *model.ReadResults, err string)) {
+func (c Connection) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.ReadResults, err string)) {
 	callback(nil, "ReadAsyncDataDB no implementado en paquete objectdb")
 }
 
-func (c Connection) ReadSyncDataDB(p model.ReadParams, data ...map[string]string) (rowsMap []map[string]string, err string) {
+func (c Connection) ReadSyncDataDB(p *model.ReadParams, data ...map[string]string) (rowsMap []map[string]string, err string) {
 	const this = "ReadSyncDataDB "
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (

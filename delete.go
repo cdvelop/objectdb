@@ -1,14 +1,8 @@
 package objectdb
 
-import (
-	"fmt"
-
-	"github.com/cdvelop/model"
-)
-
 // DeleteObjectsInDB borra objetos de la base de datos según nombre de la tabla y ids.
 func (c Connection) DeleteObjectsInDB(table_name string, backup_required bool, all_data ...map[string]string) (err string) {
-	const this = "DeleteObjectsInDB error "
+	const this = "DeleteObjectsInDB "
 	c.Open()
 	defer c.Close()
 
@@ -19,8 +13,10 @@ func (c Connection) DeleteObjectsInDB(table_name string, backup_required bool, a
 
 	for _, data := range all_data {
 		if data != nil {
-			// borramos el objeto usando la clave primaria como condición
-			query := fmt.Sprintf("DELETE FROM %s WHERE %s = %s", table_name, model.PREFIX_ID_NAME+table_name, c.PlaceHolders(1))
+			// Construir la query dinámicamente
+			query, values := c.buildDeleteQuery(table_name, data)
+
+			// Preparar y ejecutar la sentencia SQL
 			stmt, e := tx.Prepare(query)
 			if e != nil {
 				tx.Rollback()
@@ -28,7 +24,7 @@ func (c Connection) DeleteObjectsInDB(table_name string, backup_required bool, a
 			}
 			defer stmt.Close()
 
-			_, e = stmt.Exec(data[model.PREFIX_ID_NAME+table_name])
+			_, e = stmt.Exec(values...)
 			if e != nil {
 				tx.Rollback()
 				return this + filterMessageDBtoClient(e.Error(), table_name, data)
@@ -42,4 +38,29 @@ func (c Connection) DeleteObjectsInDB(table_name string, backup_required bool, a
 	}
 
 	return ""
+}
+
+// buildDeleteQuery construye la query DELETE de forma dinámica
+func (c Connection) buildDeleteQuery(table_name string, where map[string]string) (query string, args []interface{}) {
+
+	var (
+		condition          string
+		place_holder_index uint8
+	)
+
+	query = "DELETE FROM " + table_name + " WHERE "
+
+	for key, value := range where {
+
+		place_holder_index++
+		query += condition + key + " = " + c.PlaceHolders(place_holder_index)
+		args = append(args, value)
+		condition = " AND "
+	}
+
+	query += ";"
+
+	// fmt.Println("*** QUERY DELETE:", query)
+
+	return query, args
 }

@@ -17,15 +17,13 @@ type Connection struct {
 	*unixid.UnixID
 	err error
 	databaseAdapter
-}
-
-// DataBase Engine Adapter
+} // DataBase Engine Adapter
 type dbEngineAdapter interface {
 	DataBasEngine() string    //motor base de datos Postgres,MySQL,SQLite3 etc
 	DataBaseName() string     // nombre de la base de datos a conectar ej: "mydb"
 	ConnectionString() string //cadena con formato de conexión base de datos dns
 }
 
-func (Connection) RunOnClientDB() bool { //false base de datos corre en el servidor
+func (Connection) RunDBOnClient() bool { //false base de datos corre en el servidor
 	return false
 }

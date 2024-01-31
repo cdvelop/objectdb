@@ -7,12 +7,21 @@ import (
 	"github.com/cdvelop/strings"
 )
 
-func (c Connection) ReadAsyncDataDB(p *model.ReadParams, callback func(r *model.ReadResults, err string)) {
-	callback(nil, "ReadAsyncDataDB no implementado en paquete objectdb")
-}
-
-func (c Connection) ReadSyncDataDB(p *model.ReadParams, data ...map[string]string) (rowsMap []map[string]string, err string) {
-	const this = "ReadSyncDataDB "
+func (c Connection) ReadDataDB(p struct {
+	FROM_TABLE    string              //ej: "users,products" or: public.reservation, public.patient"
+	SELECT        string              // "name, phone, address" default *
+	WHERE         []map[string]string //ej: "patient.id_patient=reservation.id_patient, (OR) reservation.id_staff = '2'"
+	AND_CONDITION bool                // OR default se agrega AND si es true
+	ID            string              // unique search (usado en indexdb)
+	ORDER_BY      string              // name,phone,address
+	SORT_DESC     bool                //default ASC
+	LIMIT         int                 // 10, 5, 100. note: Postgres y MySQL: "LIMIT 10", SQLite: "LIMIT 10 OFFSET 0" OR "" no limit
+	RETURN_ANY    bool                // default string return []map[string]string, any = []map[string]interface{}
+}, async_results func(r struct {
+	String []map[string]string
+	Any    []map[string]any
+}, err string)) (sync_results []map[string]string, err string) {
+	const this = "ReadDataDB "
 	// Verificar si queremos leer todos los objetos o solo un objeto específico
 	var (
 		// read_all           = true
@@ -32,13 +41,6 @@ func (c Connection) ReadSyncDataDB(p *model.ReadParams, data ...map[string]strin
 
 	// búsqueda por multiples ids
 	field_id := model.PREFIX_ID_NAME + p.FROM_TABLE
-	for _, params := range data {
-		for key, value := range params {
-			if key == field_id {
-				wheres_found = append(wheres_found, map[string]string{field_id: value})
-			}
-		}
-	}
 
 	if p.ID != "" { // búsqueda por un único id
 		wheres_found = append(wheres_found, map[string]string{field_id: p.ID})
@@ -71,12 +73,13 @@ func (c Connection) ReadSyncDataDB(p *model.ReadParams, data ...map[string]strin
 
 				where_conditions += condition + key + " = " + where_value
 
-				if p.AND_CONDITION {
-					condition = " AND "
-				} else {
-					condition = " OR "
-				}
+				condition = " AND "
 
+			}
+			if p.AND_CONDITION {
+				condition = " AND "
+			} else {
+				condition = " OR "
 			}
 
 		}
@@ -126,10 +129,10 @@ func (c Connection) ReadSyncDataDB(p *model.ReadParams, data ...map[string]strin
 	}
 
 	if rowMap != nil {
-		rowsMap = append(rowsMap, rowMap)
+		sync_results = append(sync_results, rowMap)
 	}
 
-	return rowsMap, ""
+	return sync_results, ""
 }
 
 // SelectValue retorna valor de una consulta sql

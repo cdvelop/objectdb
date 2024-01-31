@@ -6,7 +6,6 @@ import (
 	"testing"
 
 	"github.com/cdvelop/maps"
-	"github.com/cdvelop/model"
 )
 
 func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
@@ -17,8 +16,20 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	t.Run((`READ: Caso 1 leemos la base de datos con la tabla usuario y la misma cantidad de creados. 
 	se esperan idénticos resultados`), func(t *testing.T) {
 
-		data_stored, err := c.ReadSyncDataDB(&model.ReadParams{
-			FROM_TABLE: defaulTableName, LIMIT: total_creations})
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
+			FROM_TABLE: defaulTableName,
+			LIMIT:      total_creations,
+		}, nil)
 		if err != "" {
 			t.Fatal("Caso 1 error en test de lectura ", err)
 			return
@@ -35,12 +46,22 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 2 consulta con orden por nombre Asc, se espera un resultado con limite 2`), func(t *testing.T) {
-		data_stored, err := c.ReadSyncDataDB(
-			&model.ReadParams{
-				FROM_TABLE: defaulTableName,
-				ORDER_BY:   "nombre",
-				LIMIT:      2,
-			})
+
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
+			FROM_TABLE: defaulTableName,
+			ORDER_BY:   "nombre",
+			LIMIT:      2,
+		}, nil)
 		if err != "" {
 			t.Fatal("Caso 2 error en test de lectura ", err)
 			return
@@ -61,10 +82,21 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 3 consulta con limite 1 se espera solo 1 elemento`), func(t *testing.T) {
-		data_stored, err := c.ReadSyncDataDB(&model.ReadParams{
+
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
 			FROM_TABLE: defaulTableName,
 			LIMIT:      1,
-		}, map[string]string{"LIMIT": "1"})
+		}, nil)
 		if err != "" {
 			t.Fatal("Caso 3 error en test de lectura ", err)
 			return
@@ -77,10 +109,21 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 4 consulta por campos específicos nombre y genero`), func(t *testing.T) {
-		data_stored, err := c.ReadSyncDataDB(&model.ReadParams{
+
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
 			FROM_TABLE: defaulTableName,
 			SELECT:     "nombre, genero",
-		})
+		}, nil)
 		if err != "" {
 			t.Fatal("Caso 4 error en test de lectura ", err)
 			return
@@ -104,8 +147,20 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 5 consulta con mapa nulo se espera todos los datos de la tabla`), func(t *testing.T) {
-		data_stored, err := c.ReadSyncDataDB(&model.ReadParams{
-			FROM_TABLE: defaulTableName})
+
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
+			FROM_TABLE: defaulTableName,
+		}, nil)
 		if err != "" {
 			t.Fatal("Caso 5 error en test de lectura ", err)
 			return
@@ -121,9 +176,20 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 6 consulta con tabla que no existe se espera error`), func(t *testing.T) {
-		data_stored, err := c.ReadSyncDataDB(
-			&model.ReadParams{
-				FROM_TABLE: "tabla_X"})
+
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
+			FROM_TABLE: "tabla_X",
+		}, nil)
 		if err == "" {
 			t.Fatal("Caso 6 se esperaba error y se obtuvo data: ", data_stored)
 			return
@@ -136,8 +202,20 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 			data_original[0], data_original[1], data_original[2],
 		}
 
-		data_stored, err := c.ReadSyncDataDB(&model.ReadParams{
-			FROM_TABLE: defaulTableName}, data_query...)
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{
+			FROM_TABLE: defaulTableName,
+			WHERE:      data_query,
+		}, nil)
 		if err != "" {
 			t.Fatal("no se esperaba error: ", err)
 			return
@@ -163,7 +241,18 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	})
 
 	t.Run((`READ: Caso 8 consulta sin información se espera error`), func(t *testing.T) {
-		data_stored, err := c.ReadSyncDataDB(&model.ReadParams{}, nil)
+
+		data_stored, err := c.ReadDataDB(struct {
+			FROM_TABLE    string
+			SELECT        string
+			WHERE         []map[string]string
+			AND_CONDITION bool
+			ID            string
+			ORDER_BY      string
+			SORT_DESC     bool
+			LIMIT         int
+			RETURN_ANY    bool
+		}{}, nil)
 		if err == "" {
 			t.Fatal("se esperaba error y se obtuvo data: ", data_stored)
 			return
@@ -180,7 +269,7 @@ func (c *Connection) readTest(data_original []map[string]string, t *testing.T) {
 	// 		"args": fist_name,
 	// 	}
 
-	// 	data_stored, err := c.ReadSyncDataDB(defaulTableName, query)
+	// 	data_stored, err := c.ReadDataDB(defaulTableName, query)
 	// 	if err == nil {
 	// 		log.Printf("no se esperaba error: %v", err)
 	// 	}

@@ -3,8 +3,6 @@ package objectdb
 import (
 	"strings"
 	"testing"
-
-	"github.com/cdvelop/model"
 )
 
 func (c Connection) updateTest(t *testing.T) {
@@ -58,9 +56,21 @@ func (c Connection) updateTest(t *testing.T) {
 		if data.ExpectedError == "" { //solo los casos de éxito
 
 			t.Run(("UPDATE READ CHECK: "), func(t *testing.T) {
-				out, err := c.ReadSyncDataDB(&model.ReadParams{
+
+				out, err := c.ReadDataDB(struct {
+					FROM_TABLE    string
+					SELECT        string
+					WHERE         []map[string]string
+					AND_CONDITION bool
+					ID            string
+					ORDER_BY      string
+					SORT_DESC     bool
+					LIMIT         int
+					RETURN_ANY    bool
+				}{
 					FROM_TABLE: defaulTableName,
-				}, map[string]string{"id_" + defaulTableName: data.Data["id_"+defaulTableName]})
+					WHERE:      []map[string]string{{"id_" + defaulTableName: data.Data["id_"+defaulTableName]}},
+				}, nil)
 				if err != "" {
 					t.Fatal("error en test de lectura ", err, data)
 					return
